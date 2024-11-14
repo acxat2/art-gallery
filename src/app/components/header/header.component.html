@@ -1,0 +1,42 @@
+<header class="header">
+  <div class="header__container container">
+    <div class="header__left">
+      <div class="logo__container">
+        <div
+          class="logo header__logo"
+          routerLink="home"
+        >Art-Family</div>
+        <div *ngIf="name$ | async as name">{{name}}</div>
+      </div>
+      <nav class="nav">
+        <ul class="list-reset flex nav__list">
+          @for (item of navMenu; track item) {
+            <li class="nav__item">
+              <a class="nav__link" routerLinkActive="active"
+              routerLink={{item.routerLink}}>{{item.linkName}}</a>
+            </li>
+          }
+          <li class="nav__item" *ngIf="authQuest | async">
+            <a class="nav__link" routerLinkActive="active"
+            routerLink='quest'>QUEST</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="header__right">
+      <button *ngIf="!(userIn$ | async); else out" (click)="enter()" class="header__input-btn" aria-label="Вход в аккаунт">
+        Войти
+      </button>
+      <!-- <h4 *ngIf="name$ | async as name">{{name}}</h4> -->
+    </div>
+  </div>
+  <ng-template #out>
+    <button (click)="output()" class="header__input-btn" aria-label="Выход из аккаунта">
+      Выход
+    </button>
+  </ng-template>
+  <div class="modal-container" *ngIf="modal$ | async as modal">
+    <app-modal (appClickOutside)="closeModal()" *ngIf="modal.active" [info]="modal.modalText" [error]="modal.error"></app-modal>
+  </div>
+</header>
+<!--  -->

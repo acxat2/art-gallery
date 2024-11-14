@@ -1,0 +1,27 @@
+<h2>Войдите, чтоб вам были доступны дополнительные возможности</h2>
+
+<form class="form" [formGroup]="checkForm" (ngSubmit)="sendForm()">
+  <div class="form-group">
+    <label for="" class="form-label">Имя *</label>
+    <input
+      type="text"
+      class="form-input"
+      name="name"
+      placeholder="Имя"
+      formControlName="name"
+    >
+    <ng-error *ngIf="fNameControl?.hasError('pattern')" message="Не валидное имя"></ng-error>
+  </div>
+  <div class="form-group">
+    <label for="" class="form-label">Пароль (дата рождения)</label>
+    <input
+      type="text"
+      class="form-input"
+      name="password"
+      placeholder="01.05.2008"
+      formControlName="password"
+    >
+    <ng-error *ngIf="fPasswordControl?.hasError('pattern')" message="Не валидный пароль"></ng-error>
+  </div>
+  <button>Войти</button>
+</form>

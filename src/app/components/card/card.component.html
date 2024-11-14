@@ -1,0 +1,20 @@
+<div class="card">
+  <img
+    class="card__picture"
+    src="../../../assets/pictures/card/{{picture.fileName}}"
+    alt="{{picture.name}}"
+    [routerLink]="['/picture', picture.id]"
+    >
+  <div class="card__data">
+    <div class="card__title">
+      <h2 >{{picture.name}}</h2>
+    </div>
+    <div class="card__info">
+      <p>Автор: <b><i>{{ picture.author }}</i></b></p>
+      @if (picture.year) {
+        <p>Год создания: {{ picture.year }}</p>
+      }
+      <p>Тема: <i>{{ event }}</i></p>
+    </div>
+  </div>
+</div>

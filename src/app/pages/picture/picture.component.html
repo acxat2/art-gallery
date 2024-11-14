@@ -1,0 +1,17 @@
+<div class="picture-container">
+  <h3>{{ picture.name }}</h3>
+  <div class="image-container">
+    <img src="../../../assets/pictures/{{picture.fileName}}" [alt]="picture.name">
+    <div class="btn-group">
+      <button class="btn-nav" (click)="prev()"></button>
+      <button class="btn-nav" (click)="next()"></button>
+    </div>
+  </div>
+  <div class="card__info">
+    <p>Автор: <b><i>{{ picture.author }}</i></b>
+      <span *ngIf="picture.year">; Год: {{ picture.year }}</span>
+      <span *ngIf="picture.event">; Тема: <i>{{ picture.event | events }}</i></span>
+    </p>
+  </div>
+  <!-- <p class="comment">Для перелистывания картинок нажимай на рисунок (лево, право)</p> -->
+</div>

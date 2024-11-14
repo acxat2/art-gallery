@@ -1,0 +1,15 @@
+<!-- <h1>{{title}}</h1> -->
+<div class="container">
+  <div class="select-container">
+
+    <app-select class="select" selectName="Событие" (checked)="checkedEvent($event)" [selectArr]="events" [selectControl]="eventValue"></app-select>
+    <app-select class="select" selectName="Кому" (checked)="checkedToWhom($event)" [selectArr]="toWhom" [selectControl]="toWhomValue"></app-select>
+    <app-select class="select" selectName="Автор" (checked)="checkedAuthor($event)" [selectArr]="author" [selectControl]="authorValue"></app-select>
+
+  </div>
+  <div class="cards__container" *ngIf="galleryData$ | async as galleryData">
+    @for (item of galleryData; track item) {
+      <app-gallery-card [picture]=item></app-gallery-card>
+    }
+  </div>
+</div>

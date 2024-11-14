@@ -1,0 +1,38 @@
+<div class="greeting" *ngIf="greeting$ | async">
+  <h2 class="greeting__title">Добро пожаловать на квест <i>{{userName$ | async}}</i></h2>
+  <p class="greeting__text">Приветствуем Тебя дорогой именинник! Сегодня тебя ждёт увлекательное приключение! Если у тебя есть в запасе время, и ты готова, жми "<b>Старт</b>"</p>
+  <button class="greeting__btn btn" (click)="start()">Старт</button>
+</div>
+
+<section class="section__quest quest">
+  <div class="quest__count-down" *ngIf="countdown$ | async">{{count$ | async}}</div>
+  <div class="quest__body" *ngIf="quest$ | async">
+    <p class="body__text">{{(question$ | async)?.text}}</p>
+    <form class="body__form" [formGroup]="answerForm" (ngSubmit)="answer()">
+      <input
+        class="body__input form-input"
+        type="text"
+        name="questionAnswer"
+        placeholder="Введите ключ для продолжения"
+        formControlName="questionAnswer"
+      >
+      <div class="btn-container">
+        <button class="btn body__btn">Ответить</button>
+      </div>
+    </form>
+  </div>
+  <button class="btn btn-hint" *ngIf="hintBtn$ | async" (click)="hintActive()">Подсказка</button>
+  <div class="hint">
+    <i *ngIf="countHint$ | async">Подсказка откроется через: {{countH$ | async}}с</i>
+    <span *ngIf="hint$ | async">{{hintText$ | async}}</span>
+  </div>
+  <p class="congratulation" *ngIf="congratulationActive$ | async">
+    {{congratulation$ | async}}
+  </p>
+</section>
+<p class="footer">Данная страниица активна только в Ваш день рождения. Успейте пройти квест сегодня.</p>
+<div *ngIf="user.role === 'admin'">
+  <button (click)="clear()">Очистить кеш</button>
+  <pre>{{questions | json}}</pre>
+</div>
+

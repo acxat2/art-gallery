@@ -1,0 +1,22 @@
+.select-container {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.select {
+  margin-right: 10px;
+}
+
+.cards__container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 0.5fr));
+  gap: 5px;
+}
+
+@media (max-width: 605px) {
+  .cards__container {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 0.5fr));
+    gap: 3px;
+  }
+
+}

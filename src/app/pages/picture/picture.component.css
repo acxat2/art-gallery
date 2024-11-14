@@ -1,0 +1,43 @@
+.picture-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 5px;
+  padding-right: 5px;
+  height: 100%;
+}
+
+.image-container {
+  position: relative;
+}
+
+.btn-group {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.btn-nav {
+  width: 50%;
+  height: 100%;
+  border: none;
+  opacity: 0;
+  cursor: pointer;
+  transition: ease-in-out 0.1s opacity;
+}
+
+.btn-nav:active {
+  opacity: 0.3;
+}
+
+/* .comment {
+  position: absolute;
+  bottom: 0;
+  margin-top: 0;
+  text-align: center;
+  opacity: 0.4;
+  font-size: 0.7em;
+} */
