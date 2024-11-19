@@ -7,37 +7,13 @@
     <app-select class="select" selectName="Автор" (checked)="checkedAuthor($event)" [selectArr]="author" [selectControl]="authorValue"></app-select>
 
   </div>
-  <!-- <div class="cards__container" *ngIf="galleryData$ | async as galleryData">
-    @for (item of galleryData; track item; let  i = $index) {
-      <img
-      src="../../../assets/pictures/card/{{item.fileName}}"
-      class="card__picture"
-      [alt]="item.name"
-      style="cursor: pointer"
-      (click)="imageClick(i)" />
+  <div class="cards__container" *ngIf="galleryData$ | async as galleryData">
+    @for (item of galleryData; track item) {
       <app-gallery-card [picture]=item></app-gallery-card>
     }
-    <p-galleria
-      [value]="galleryData"
-      [(visible)]="displayCustom"
-      [(activeIndex)]="activeIndex"
-      [responsiveOptions]="responsiveOptions"
-      [containerStyle]="{ 'max-width': '850px' }"
-      [numVisible]="7"
-      [circular]="true"
-      [fullScreen]="true"
-      [showItemNavigators]="true"
-      [showThumbnails]="false">
-      <ng-template pTemplate="item" let-item>
-          <img
-            src="../../assets/pictures/{{item.fileName}}"
-            style="width: 100%; display: block;" />
-      </ng-template>
-    </p-galleria>
-
-  </div> -->
-  <div *ngIf="galleryData$ | async as galleryData">
-    <app-p-gallery [images]="galleryData"></app-p-gallery>
   </div>
+  <!-- <div *ngIf="galleryData$ | async as galleryData">
+    <app-p-gallery [images]="galleryData"></app-p-gallery>
+  </div> -->
 
 </div>

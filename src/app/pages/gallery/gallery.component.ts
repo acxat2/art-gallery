@@ -28,33 +28,7 @@ import { PGalleryComponent } from "./p-gallery/p-gallery.component";
 })
 export class GalleryComponent {
   public galleryData$: Observable<IPicture[]> = this.galleryService.galleryState$
-  public title!: string;
-
-  displayCustom: boolean = false;
-  activeIndex: number = 0;
-
-  imageClick(index: number) {
-    this.activeIndex = index;
-    this.displayCustom = true;
-  }
-  responsiveOptions: any[] = [
-    {
-        breakpoint: '1500px',
-        numVisible: 5
-    },
-    {
-        breakpoint: '1024px',
-        numVisible: 3
-    },
-    {
-        breakpoint: '768px',
-        numVisible: 2
-    },
-    {
-        breakpoint: '560px',
-        numVisible: 1
-    }
-  ];
+  // public title!: string;
 
   public events = [
     'Все',
