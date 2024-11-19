@@ -15,7 +15,6 @@ import { ModalComponent } from "../modal/modal.component";
 })
 export class HeaderComponent {
   @Input() public navMenu = [
-    // {linkName: 'Главная', routerLink: 'home'},
     {linkName: 'Галерея', routerLink: 'gallery'},
     // {linkName: 'Клендарь', routerLink: 'calendar'},
     // {linkName: 'Контакты', routerLink: 'contacts'},

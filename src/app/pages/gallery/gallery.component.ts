@@ -1,41 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Holiday, IPicture, ToWhom } from '../../../base/gallery';
-import { CardComponent } from '../../components/card/card.component';
 import { GalleryCardComponent } from "../../components/gallery-card/gallery-card.component";
 import { SelectComponent } from '../../components/select/select.component';
 import { GalleryService } from '../../services/gallery.service';
-import { GalleriaModule } from 'primeng/galleria';
-import { PGalleryComponent } from "./p-gallery/p-gallery.component";
 
 @Component({
   selector: 'app-gallery',
   standalone: true,
   imports: [
-    GalleriaModule,
-    CommonModule,
-    CardComponent,
     CommonModule,
     GalleryCardComponent,
     SelectComponent,
-    PGalleryComponent
 ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.css',
-  providers: [GalleryService]
 })
 export class GalleryComponent {
   public galleryData$: Observable<IPicture[]> = this.galleryService.galleryState$
-  // public title!: string;
 
   public events = [
     'Все',
     Holiday.holiday,
     Holiday.birthday,
     Holiday.artSchool
-
   ]
 
   public toWhom = [
@@ -72,7 +62,6 @@ export class GalleryComponent {
   }
 
   constructor(
-    private route: ActivatedRoute,
     private galleryService: GalleryService,
     private router: Router
   ) {
@@ -92,5 +81,5 @@ export class GalleryComponent {
     }
     this.router.navigate([], {queryParams})
   }
-
 }
+

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { gallery, Holiday, IPicture } from '../../base/gallery';
-import { BehaviorSubject, filter, of } from 'rxjs';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { gallery, IPicture } from '../../base/gallery';
 import { AuthService } from './auth.service';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -157,7 +157,6 @@ export class GalleryService {
 
   constructor(
     private authService: AuthService,
-    // private route: ActivatedRoute,
     private router: Router
   ) {
     }

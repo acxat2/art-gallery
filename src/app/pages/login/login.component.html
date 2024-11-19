@@ -25,7 +25,6 @@
         placeholder="01.01.2000"
         formControlName="password"
         />
-        <!-- class="form-input" -->
       <ng-error *ngIf="fPasswordControl?.hasError('pattern')" message="Не валидный пароль"></ng-error>
     </div>
     <p-button (onClick)="sendForm()" label="Войти"></p-button>

@@ -3,12 +3,12 @@ import { Component, DoCheck } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPicture } from '../../../base/gallery';
 import { GalleryService } from '../../services/gallery.service';
-import { EventsPipe } from '../../pipes/events.pipe';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-picture',
   standalone: true,
-  imports: [CommonModule, EventsPipe],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './picture.component.html',
   styleUrl: './picture.component.css'
 })

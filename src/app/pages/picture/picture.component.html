@@ -10,8 +10,7 @@
   <div class="card__info">
     <p>Автор: <b><i>{{ picture.author }}</i></b>
       <span *ngIf="picture.year">; Год: {{ picture.year }}</span>
-      <span *ngIf="picture.event">; Тема: <i>{{ picture.event | events }}</i></span>
+      <span *ngIf="picture.event">; Тема: <i>{{ picture.event | translate }}</i></span>
     </p>
   </div>
-  <!-- <p class="comment">Для перелистывания картинок нажимай на рисунок (лево, право)</p> -->
 </div>

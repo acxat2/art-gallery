@@ -17,7 +17,6 @@ export type Modal = {
 })
 
 export class AuthService {
-  private isAuth = false;
   public isAdult = false;
   private userName = '';
 
@@ -33,7 +32,7 @@ export class AuthService {
   private STORAGEKEY = 'art-studio';
 
   public modal$ = new BehaviorSubject<Modal>(this.modal);
-  public isAuth$ = new BehaviorSubject<boolean>(this.isAuth);
+  public isAuth$ = new BehaviorSubject<boolean>(false);
   public userName$ = new BehaviorSubject<string>(this.userName);
   public authQuest$ = new BehaviorSubject<boolean>(auth.isLoggedIn)
 
@@ -55,7 +54,6 @@ export class AuthService {
     this.isAdultFun(findUser);
 
     if (findUser.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
-      this.isAuth = true;
       auth.isLoggedIn = true;
       this.authQuest$.next(auth.isLoggedIn);
     }
@@ -63,8 +61,7 @@ export class AuthService {
     this.userName = user.name;
     this.userName$.next(this.userName);
     this.router.navigate(['']);
-    this.isAuth = true;
-    this.isAuth$.next(this.isAuth);
+    this.isAuth$.next(true);
 
     this.storage.saveToStorage(this.STORAGEKEY, JSON.stringify(findUser));
     this.modalActive(`Добро пожаловать ${findUser.name}`, false);
@@ -72,8 +69,8 @@ export class AuthService {
   }
 
   public isAuthOut() {
-    this.isAuth = auth.isLoggedIn = false;
-    this.isAuth$.next(this.isAuth);
+    auth.isLoggedIn = false;
+    this.isAuth$.next(false);
     this.userName = '';
     this.userName$.next(this.userName);
     auth.isLoggedIn = false;
@@ -116,8 +113,7 @@ export class AuthService {
       this.userName = user.name;
       this.userName$.next(this.userName);
 
-      this.isAuth = true;
-      this.isAuth$.next(this.isAuth);
+      this.isAuth$.next(true);
     }
   }
 

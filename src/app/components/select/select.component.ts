@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EventsPipe } from '../../pipes/events.pipe';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, EventsPipe],
+  imports: [FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './select.component.html',
   styleUrl: './select.component.css'
 })

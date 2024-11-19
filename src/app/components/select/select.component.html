@@ -2,7 +2,7 @@
   <label class="select-label">{{selectName}}</label>
   <select class="select" name="{{selectName}}" [(ngModel)]="selectControl" (change)="checkSelect()">
     @for (item of selectArr; track item) {
-      <option value="{{item}}">{{item | events}}</option>
+      <option value="{{item}}">{{item | translate}}</option>
     }
   </select>
 </div>
