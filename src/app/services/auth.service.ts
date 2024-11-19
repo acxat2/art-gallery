@@ -52,9 +52,7 @@ export class AuthService {
       return;
     }
 
-    if (getFullYear(user.birthday) >= 18) {
-      this.isAdult = true;
-    }
+    this.isAdultFun(findUser);
 
     if (findUser.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
       this.isAuth = true;
@@ -69,7 +67,6 @@ export class AuthService {
     this.isAuth$.next(this.isAuth);
 
     this.storage.saveToStorage(this.STORAGEKEY, JSON.stringify(findUser));
-    console.log('authService')
     this.modalActive(`Добро пожаловать ${findUser.name}`, false);
 
   }
@@ -106,16 +103,14 @@ export class AuthService {
   ) {
     const userStorage = this.storage.getFromStorage(this.STORAGEKEY);
     if (userStorage) {
-      const user = JSON.parse(userStorage);
+      const user: User = JSON.parse(userStorage);
       if (user.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
         auth.isLoggedIn = true;
       } else {
         auth.isLoggedIn = false;
       }
 
-      if (getFullYear(user.birthday) >= 18) {
-        this.isAdult = true;
-      }
+      this.isAdultFun(user);
 
       this.authQuest$.next(auth.isLoggedIn);
       this.userName = user.name;
@@ -123,6 +118,12 @@ export class AuthService {
 
       this.isAuth = true;
       this.isAuth$.next(this.isAuth);
+    }
+  }
+
+  private isAdultFun(user: User): void {
+    if (getFullYear(user.birthday) >= 18 && user.role !== 'user') {
+      this.isAdult = true;
     }
   }
 }

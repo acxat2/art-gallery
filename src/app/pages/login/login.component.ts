@@ -3,11 +3,22 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgErrorComponent } from "../../components/ng-error/ng-error.component";
 import { AuthService } from '../../services/auth.service';
+import { InputMaskModule } from 'primeng/inputmask'
+import { ButtonModule } from 'primeng/button'
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [NgErrorComponent, FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [
+    ButtonModule,
+    InputMaskModule,
+    NgErrorComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    InputTextModule
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })

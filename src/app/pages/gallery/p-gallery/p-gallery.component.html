@@ -1,0 +1,35 @@
+<div class="cards__container" *ngIf="images">
+  @for (item of images; track item; let  i = $index) {
+    <img
+    src="assets/pictures/card/{{item.fileName}}"
+    class="card__picture"
+    [alt]="item.name"
+    style="cursor: pointer"
+    (click)="imageClick(i)" />
+  }
+  <!-- [numVisible]="7" -->
+  <p-galleria
+    [responsiveOptions]="responsiveOptions"
+    [value]="images"
+    [(visible)]="displayCustom"
+    [circular]="true"
+    [containerStyle]="{'max-width': '850px'}"
+    [fullScreen]="true"
+    [showItemNavigators]="true"
+    [(activeIndex)]="activeIndex"
+    [showThumbnails]="false"
+    autoPlay="true"
+    shouldStopAutoplayByClick="true"
+    transitionInterval="4000"
+    showTransitionOptions="300ms"
+    hideTransitionOptions="200ms"
+    >
+    <ng-template pTemplate="item" let-item>
+      <img
+            src="assets/pictures/{{item.fileName}}"
+            style="width: 100%; height: 100%; display: block; z-index: -1;" />
+    </ng-template>
+  </p-galleria>
+
+</div>
+

@@ -8,7 +8,13 @@ import { FooterComponent } from "./components/footer/footer.component";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, UpperCasePipe, HeaderComponent, VideoComponent, FooterComponent],
+  imports: [
+    RouterOutlet,
+    UpperCasePipe,
+    HeaderComponent,
+    VideoComponent,
+    FooterComponent,
+  ],
   template: `
       <app-header/>
       <main class="container">

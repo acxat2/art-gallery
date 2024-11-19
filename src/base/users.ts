@@ -44,5 +44,10 @@ export const users: User[] = [
     name: 'Ольга',
     birthday: '27.09.1959',
     role: 'user'
-  }
+  },
+  {
+    name: 'User',
+    birthday: '01.01.2000',
+    role: 'user'
+  },
 ]

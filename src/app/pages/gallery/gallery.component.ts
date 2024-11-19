@@ -7,17 +7,54 @@ import { CardComponent } from '../../components/card/card.component';
 import { GalleryCardComponent } from "../../components/gallery-card/gallery-card.component";
 import { SelectComponent } from '../../components/select/select.component';
 import { GalleryService } from '../../services/gallery.service';
+import { GalleriaModule } from 'primeng/galleria';
+import { PGalleryComponent } from "./p-gallery/p-gallery.component";
 
 @Component({
   selector: 'app-gallery',
   standalone: true,
-  imports: [CommonModule, CardComponent, CommonModule, GalleryCardComponent, SelectComponent],
+  imports: [
+    GalleriaModule,
+    CommonModule,
+    CardComponent,
+    CommonModule,
+    GalleryCardComponent,
+    SelectComponent,
+    PGalleryComponent
+],
   templateUrl: './gallery.component.html',
-  styleUrl: './gallery.component.css'
+  styleUrl: './gallery.component.css',
+  providers: [GalleryService]
 })
 export class GalleryComponent {
   public galleryData$: Observable<IPicture[]> = this.galleryService.galleryState$
   public title!: string;
+
+  displayCustom: boolean = false;
+  activeIndex: number = 0;
+
+  imageClick(index: number) {
+    this.activeIndex = index;
+    this.displayCustom = true;
+  }
+  responsiveOptions: any[] = [
+    {
+        breakpoint: '1500px',
+        numVisible: 5
+    },
+    {
+        breakpoint: '1024px',
+        numVisible: 3
+    },
+    {
+        breakpoint: '768px',
+        numVisible: 2
+    },
+    {
+        breakpoint: '560px',
+        numVisible: 1
+    }
+  ];
 
   public events = [
     'Все',

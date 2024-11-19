@@ -25,13 +25,13 @@ export const routes: Routes = [
       title: 'Галерея рисунков'
     }
   },
-  {
-    path: 'calendar',
-    component: CalendarComponent,
-    data: {
-      title: 'Органайзер/календарь'
-    }
-  },
+  // {
+  //   path: 'calendar',
+  //   component: CalendarComponent,
+  //   data: {
+  //     title: 'Органайзер/календарь'
+  //   }
+  // },
   {
     path: 'home',
     component: HomeComponent,

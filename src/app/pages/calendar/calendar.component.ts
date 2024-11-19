@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CalendarSelectorComponent } from "./components/calendar-selector/calendar-selector.component";
+import { CalendarBodyComponent } from "./components/calendar-body/calendar-body.component";
+import { CalendarOrganizerComponent } from "./components/calendar-organizer/calendar-organizer.component";
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [],
+  imports: [CalendarSelectorComponent, CalendarBodyComponent, CalendarOrganizerComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
 })
