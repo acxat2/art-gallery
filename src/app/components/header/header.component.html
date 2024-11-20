@@ -27,7 +27,6 @@
       <button *ngIf="!(userIn$ | async); else out" (click)="enter()" class="header__input-btn" aria-label="Вход в аккаунт">
         Войти
       </button>
-      <!-- <h4 *ngIf="name$ | async as name">{{name}}</h4> -->
     </div>
   </div>
   <ng-template #out>
@@ -36,7 +35,6 @@
     </button>
   </ng-template>
   <div class="modal-container" *ngIf="modal$ | async as modal">
-    <app-modal (appClickOutside)="closeModal()" *ngIf="modal.active" [info]="modal.modalText" [error]="modal.error"></app-modal>
+    <app-modal (outside)="closeModal()" *ngIf="modal.active" [info]="modal.modalText" [error]="modal.error"></app-modal>
   </div>
 </header>
-<!--  -->

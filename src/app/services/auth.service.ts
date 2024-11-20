@@ -25,9 +25,9 @@ export class AuthService {
 
 
   private modal = {
-    active: false,
+    active: true,
     error: false,
-    modalText: ''
+    modalText: 'Добро пожаловать Асхат'
   };
   private STORAGEKEY = 'art-studio';
 
