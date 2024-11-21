@@ -28,6 +28,7 @@ export class PictureComponent implements DoCheck {
   }
 
   ngDoCheck(): void {
+    this.id = this.route.snapshot.paramMap.get('id') as any as number;
     this.picture = this.gallery.getById(+this.id);
   }
 

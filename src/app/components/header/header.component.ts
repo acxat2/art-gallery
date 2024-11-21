@@ -2,14 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 import { AuthService, Modal } from '../../services/auth.service';
 import { ModalComponent } from "../modal/modal.component";
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterModule, CommonModule, ModalComponent, ClickOutsideDirective],
+  imports: [RouterModule, CommonModule, ModalComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
