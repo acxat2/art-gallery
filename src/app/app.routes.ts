@@ -7,6 +7,9 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PictureComponent } from './pages/picture/picture.component';
 import { ProjectsComponent } from './pages/projects/projects.component';
 import { QuestComponent } from './pages/quest/quest.component';
+import { MusicComponent } from './pages/music/music.component';
+import { loggedGuard } from './guards/logged.guard';
+import { CalendarComponent } from './pages/calendar/calendar.component';
 
 
 
@@ -18,22 +21,27 @@ export const routes: Routes = [
   },
   {
     path: 'gallery',
+    pathMatch: 'full',
     component: GalleryComponent,
     data: {
       title: 'Галерея рисунков'
     }
   },
   {
+    path: 'music',
+    component: MusicComponent,
+    canActivate: [loggedGuard],
+    data: {
+      title: 'Игра на фортепиано'
+    }
+  },
+  {
     path: 'home',
     component: HomeComponent,
-    pathMatch: 'full'
   },
   // {
-  //   path: 'projects',
-  //   component: ProjectsComponent,
-  //   data: {
-  //     title: 'Мои проекты'
-  //   }
+  //   path: 'calendar',
+  //   component: CalendarComponent,
   // },
   {
     path: 'quest',

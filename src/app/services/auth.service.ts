@@ -31,10 +31,11 @@ export class AuthService {
   };
   private STORAGEKEY = 'art-studio';
 
+  public default$ = new BehaviorSubject<boolean>(true);
   public modal$ = new BehaviorSubject<Modal>(this.modal);
   public isAuth$ = new BehaviorSubject<boolean>(false);
   public userName$ = new BehaviorSubject<string>(this.userName);
-  public authQuest$ = new BehaviorSubject<boolean>(auth.isLoggedIn)
+  public authQuest$ = new BehaviorSubject<boolean>(auth.isQuestIn)
 
   public isAuthIn(user: User): void {
     const findUser= users.find(us => us.name === user.name);
@@ -54,10 +55,11 @@ export class AuthService {
     this.isAdultFun(findUser);
 
     if (findUser.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
-      auth.isLoggedIn = true;
-      this.authQuest$.next(auth.isLoggedIn);
+      auth.isQuestIn = true;
+      this.authQuest$.next(auth.isQuestIn);
     }
 
+    auth.isLoggedIn = true;
     this.userName = user.name;
     this.userName$.next(this.userName);
     this.router.navigate(['']);
@@ -69,12 +71,12 @@ export class AuthService {
   }
 
   public isAuthOut() {
-    auth.isLoggedIn = false;
+    auth.isQuestIn = false;
     this.isAuth$.next(false);
     this.userName = '';
     this.userName$.next(this.userName);
-    auth.isLoggedIn = false;
-    this.authQuest$.next(auth.isLoggedIn);
+    auth.isQuestIn = false;
+    this.authQuest$.next(auth.isQuestIn);
 
     this.storage.saveToStorage(this.STORAGEKEY, '');
     location.reload()
@@ -102,14 +104,15 @@ export class AuthService {
     if (userStorage) {
       const user: User = JSON.parse(userStorage);
       if (user.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
-        auth.isLoggedIn = true;
+        auth.isQuestIn = true;
       } else {
-        auth.isLoggedIn = false;
+        auth.isQuestIn = false;
       }
 
       this.isAdultFun(user);
+      auth.isLoggedIn = true;
 
-      this.authQuest$.next(auth.isLoggedIn);
+      this.authQuest$.next(auth.isQuestIn);
       this.userName = user.name;
       this.userName$.next(this.userName);
 

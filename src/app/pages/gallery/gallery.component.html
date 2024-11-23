@@ -8,7 +8,9 @@
   </div>
   <div class="cards__container" *ngIf="galleryData$ | async as galleryData">
     @for (item of galleryData; track item) {
-      <app-gallery-card [picture]=item></app-gallery-card>
+    <app-gallery-card [picture]=item></app-gallery-card>
     }
   </div>
 </div>
+
+<!-- <p>gallery work</p> -->

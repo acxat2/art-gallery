@@ -1,0 +1,9 @@
+.media__title {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.media__description {
+  margin: 0;
+  padding-top: 5px;
+}

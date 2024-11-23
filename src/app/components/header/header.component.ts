@@ -13,17 +13,20 @@ import { ModalComponent } from "../modal/modal.component";
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
-  @Input() public navMenu = [
-    {linkName: 'Галерея', routerLink: 'gallery'},
-    // {linkName: 'Клендарь', routerLink: 'calendar'},
-    // {linkName: 'Контакты', routerLink: 'contacts'},
-  ]
-
+  private default$: Observable<boolean> = this.authService.default$;
   public userIn$: Observable<boolean> = this.authService.isAuth$;
+  private authQuest$: Observable<boolean> = this.authService.authQuest$
   public name$: Observable<string> = this.authService.userName$;
   public modal$: Observable<Modal> = this.authService.modal$;
 
-  public authQuest = this.authService.authQuest$
+
+  @Input() public navMenu = [
+    {linkName: 'Рисунки', routerLink: 'gallery', isLoggedIn: this.default$},
+    {linkName: 'Музыка', routerLink: 'music', isLoggedIn: this.userIn$},
+    // {linkName: 'Клендарь', routerLink: 'calendar', isLoggedIn: this.default$},
+    // {linkName: 'Контакты', routerLink: 'contacts', isLoggedIn: this.default$},
+    {linkName: 'QUEST', routerLink: 'quest', isLoggedIn: this.authQuest$}
+  ]
 
   public enter() {
     location.replace('/login')

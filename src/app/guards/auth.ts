@@ -1,4 +1,5 @@
 export const auth = {
-  isLoggedIn: false,
+  isQuestIn: false,
+  isLoggedIn: false
 }
 

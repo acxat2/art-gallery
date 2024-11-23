@@ -15,7 +15,11 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 
 export class PictureComponent implements DoCheck {
   public picture!: IPicture;
-  private id = this.route.snapshot.paramMap.get('id') as any as number;
+  private id = this.getIdParam();
+
+  private getIdParam(): number {
+    return this.route.snapshot.paramMap.get('id') as any as number;
+  }
 
   public next() {
     this.id = this.gallery.next(+this.id).id;
@@ -28,7 +32,7 @@ export class PictureComponent implements DoCheck {
   }
 
   ngDoCheck(): void {
-    this.id = this.route.snapshot.paramMap.get('id') as any as number;
+    this.id = this.getIdParam();
     this.picture = this.gallery.getById(+this.id);
   }
 

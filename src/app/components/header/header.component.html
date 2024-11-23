@@ -11,15 +11,14 @@
       <nav class="nav">
         <ul class="list-reset flex nav__list">
           @for (item of navMenu; track item) {
-            <li class="nav__item">
-              <a class="nav__link" routerLinkActive="active"
-              routerLink={{item.routerLink}}>{{item.linkName}}</a>
-            </li>
+            @if (item.isLoggedIn | async) {
+              <li class="nav__item">
+                <a class="nav__link" routerLinkActive="active"
+                  routerLink={{item.routerLink}}
+                >{{item.linkName}}</a>
+              </li>
+            }
           }
-          <li class="nav__item" *ngIf="authQuest | async">
-            <a class="nav__link" routerLinkActive="active"
-            routerLink='quest'>QUEST</a>
-          </li>
         </ul>
       </nav>
     </div>

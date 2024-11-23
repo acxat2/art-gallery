@@ -4,7 +4,7 @@ import { inject } from '@angular/core';
 
 export const questGuard: CanActivateFn = (route, state) => {
   const router = inject(Router)
-  if (auth.isLoggedIn) {
+  if (auth.isQuestIn) {
     return true;
   }
 

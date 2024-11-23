@@ -16,6 +16,16 @@ export const users: User[] = [
     role: 'family'
   },
   {
+    name: 'Алина',
+    birthday: '01.05.2008',
+    role: 'family'
+  },
+  {
+    name: 'Альбина',
+    birthday: '30.07.1980',
+    role: 'family'
+  },
+  {
     name: 'Асхат',
     birthday: '29.10.1982',
     role: 'admin'
@@ -41,13 +51,13 @@ export const users: User[] = [
     role: 'friend'
   },
   {
-    name: 'Алина',
-    birthday: '01.05.2008',
-    role: 'family'
-  },
-  {
     name: 'Ольга',
     birthday: '27.09.1959',
+    role: 'user'
+  },
+  {
+    name: 'Абдулгали',
+    birthday: '23.07.1954',
     role: 'user'
   },
   {

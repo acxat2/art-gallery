@@ -79,7 +79,10 @@ export class GalleryComponent {
       queryParams.toWhom = this.galleryService.toWhomValue
       this.toWhomValue = this.galleryService.toWhomValue
     }
-    this.router.navigate([], {queryParams})
+
+    if (Object.keys(queryParams).length) {
+      this.router.navigate(['/gallery'], {queryParams: queryParams})
+    }
   }
 }
 
