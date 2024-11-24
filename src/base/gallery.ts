@@ -123,6 +123,7 @@ export const gallery: IPicture[] = [
     toWhom: ToWhom.grandmother,
     fileName: 'scan 13.jpg',
     event: Holiday.birthday,
+    year: 2022,
     author: 'Алина'
   },
   {
@@ -317,6 +318,7 @@ export const gallery: IPicture[] = [
     toWhom: ToWhom.grandmother,
     fileName: 'scan 12.jpg',
     event: Holiday.holiday,
+    year: 2023,
     author: 'Алина'
   },
 
@@ -345,4 +347,44 @@ export const gallery: IPicture[] = [
     year: 2002,
     author: 'Папа'
   },
+
+
+
+  {
+    id: 40,
+    name: 'День рождения бабушки',
+    toWhom: ToWhom.grandmother,
+    fileName: 'grandmather64.jpg',
+    event: Holiday.birthday,
+    year: 2023,
+    author: 'Алина'
+  },
+  {
+    id: 41,
+    name: 'День рождения бабушки',
+    toWhom: ToWhom.grandmother,
+    fileName: 'grandmather65.jpg',
+    event: Holiday.birthday,
+    year: 2024,
+    author: 'Алина'
+  },
+  {
+    id: 42,
+    name: 'День рождения папы',
+    toWhom: ToWhom.father,
+    fileName: 'photo_2024-11-24_17-43-15.jpg',
+    event: Holiday.birthday,
+    year: 2024,
+    author: 'Даниил'
+  },
+  {
+    id: 43,
+    name: 'День рождения папы',
+    toWhom: ToWhom.father,
+    fileName: 'photo_2024-11-24_17-43-15 (2).jpg',
+    event: Holiday.birthday,
+    year: 2024,
+    author: 'Алина'
+  },
+
 ]
