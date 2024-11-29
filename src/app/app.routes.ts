@@ -10,6 +10,7 @@ import { QuestComponent } from './pages/quest/quest.component';
 import { MusicComponent } from './pages/music/music.component';
 import { loggedGuard } from './guards/logged.guard';
 import { CalendarComponent } from './pages/calendar/calendar.component';
+import { LiteratureComponent } from './pages/literature/literature.component';
 
 
 
@@ -43,6 +44,11 @@ export const routes: Routes = [
   //   path: 'calendar',
   //   component: CalendarComponent,
   // },
+  {
+    path: 'literature',
+    component: LiteratureComponent,
+    canActivate: [loggedGuard],
+  },
   {
     path: 'quest',
     component: QuestComponent,

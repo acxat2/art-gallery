@@ -347,9 +347,6 @@ export const gallery: IPicture[] = [
     year: 2002,
     author: 'Папа'
   },
-
-
-
   {
     id: 40,
     name: 'День рождения бабушки',
@@ -386,5 +383,4 @@ export const gallery: IPicture[] = [
     year: 2024,
     author: 'Алина'
   },
-
 ]

@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   imports: [],
   template: `
-    <video width='auto' height={{hight}} controls poster={{poster}}>
+    <video width='100%' height='{{hight}}' controls poster={{poster}}>
       <source src={{src}}>
     </video>
 
