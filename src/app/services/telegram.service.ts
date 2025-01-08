@@ -14,7 +14,7 @@ export type IStore = {
 
 export class TelegramService {
 
-  private TOKEN = '7620505652:AAFME##################mHIkKX3CxXT4';
+  private TOKEN = '7620505652:AAFMEvBgYODBGq77OHyxaujmHIkKX3CxXT4';
   private chatID = '-4700772482';
   private URL = `https://api.telegram.org/bot${this.TOKEN}/sendMessage?chat_id=${this.chatID}&parse_mode=html&text=`
 
