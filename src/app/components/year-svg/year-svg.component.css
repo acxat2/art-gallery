@@ -1,0 +1,102 @@
+.digit {
+  stroke-width: 30;
+  animation: 10s var(--ease) digit alternate infinite;
+  animation-delay: calc(var(--i) * 0.05s);
+}
+
+.digit circle,
+.digit path {
+  animation: inherit;
+  stroke: var(--color);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dashoffset: -1.2;
+  stroke-dasharray: 1 1.2;
+  stroke-opacity: 0.8;
+}
+
+.digit .first {
+  animation-name: circle-draw-first;
+}
+
+.digit .second {
+  animation-name: circle-draw-second;
+}
+
+@keyframes circle-draw-first {
+  0%, 5% {
+    stroke-dasharray: 0 1.2 0.2 0.3;
+    stroke-dashoffset: 1.75;
+  }
+  8%, 20% {
+    stroke-dasharray: 1 1.1;
+    stroke-dashoffset: 0;
+  }
+  30%, 100% {
+    stroke-dashoffset: -1.1;
+  }
+}
+
+@keyframes circle-draw-second {
+  0%, 5% {
+    stroke-dasharray: 0 1.2 0.2 0.3;
+    stroke-dashoffset: 1.75;
+  }
+  8%, 20% {
+    stroke-dasharray: 1 1.1;
+    stroke-dashoffset: 0;
+  }
+  30%, 100% {
+    stroke-dashoffset: 1.1;
+  }
+}
+
+.digit path {
+  animation-name: path-draw;
+}
+
+@keyframes path-draw {
+  0%, 10% {
+    stroke-dashoffset: 1.1;
+  }
+  50%, 100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.digit:nth-child(1) {
+  --x-offset: 150%
+}
+
+.digit:nth-child(2) {
+  --x-offset: 50%
+}
+
+.digit:nth-child(3) {
+  --x-offset: -50%
+}
+
+.digit:nth-child(4) {
+  --x-offset: -150%
+}
+
+.digit:nth-child(even) {
+  --y-offset: -18%;
+}
+
+.digit:nth-child(odd) {
+  --y-offset: 18%;
+}
+
+
+@keyframes digit {
+  from, 10% {
+    transform: translate(var(--x-offset, 0), var(--y-offset, 0));
+  }
+  15% {
+    transform: translate(0%, var(--y-offset));
+  }
+  20%, to {
+    transform: none;
+  }
+}

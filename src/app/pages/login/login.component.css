@@ -33,3 +33,17 @@
   padding: 5px 10px;
   width: 100%;
 }
+
+.btn {
+  font-size: 1em;
+}
+
+.align-center {
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.link {
+  color: darkviolet;
+}

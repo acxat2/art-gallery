@@ -32,3 +32,25 @@
 .btn-nav:active {
   opacity: 0.3;
 }
+
+.back {
+  display: none;
+}
+
+@media (max-width: 660px) {
+
+  .back {
+    display: block;
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    padding: 3px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--color-9d5cd0);
+  }
+
+  .back:hover {
+    color: var(--color-7943A4);
+  }
+}

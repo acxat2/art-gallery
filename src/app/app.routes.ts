@@ -11,6 +11,9 @@ import { MusicComponent } from './pages/music/music.component';
 import { loggedGuard } from './guards/logged.guard';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { LiteratureComponent } from './pages/literature/literature.component';
+import { newYearGuard } from './guards/new-year.guard';
+import { NewYearComponent } from './pages/new-year/new-year.component';
+import { RegistrationComponent } from './pages/registration/registration.component';
 
 
 
@@ -37,6 +40,14 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'newyear',
+    component: NewYearComponent,
+    canActivate: [newYearGuard],
+    data: {
+      title: 'С Новым 2025 Годом!!!'
+    }
+  },
+  {
     path: 'home',
     component: HomeComponent,
   },
@@ -57,6 +68,10 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent
+  },
+  {
+    path: 'registration',
+    component: RegistrationComponent
   },
   {
     path: 'picture/:id',

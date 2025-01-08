@@ -1,0 +1,52 @@
+<div class="container">
+  <h2 class="title">Заявка на регистрацию</h2>
+
+  <form class="form" [formGroup]="checkForm" (ngSubmit)="sendForm()">
+    <div class="form-group">
+      <label for="" class="form-label">Имя *</label>
+      <input
+        type="text"
+        class="form-input"
+        name="name"
+        pInputText
+        placeholder="User"
+        required="true"
+        formControlName="name"
+      >
+      <ng-error *ngIf="fNameControl?.hasError('pattern')" message="Не валидное имя"></ng-error>
+    </div>
+    <div class="form-group">
+      <label for="" class="form-label">Дата рождения *</label>
+      <input
+        name="password"
+        type="date"
+        class="form-input input"
+        pInputText
+        placeholder="01.01.2000"
+        required="true"
+        formControlName="birthday"
+      />
+      <ng-error *ngIf="fBirthdayControl?.hasError('pattern')" message="Не валидная дата"></ng-error>
+    </div>
+    <div class="form-group">
+      <label for="" class="form-label">Комментарий *</label>
+      <textarea
+        type="text"
+        class="form-input texerea"
+        name="comment"
+        pInputText
+        rows="5"
+        required="true"
+        placeholder="Кто Вы? От кого узнали о нас? Минимум 5 символов."
+        formControlName="textarea"
+      ></textarea>
+      <!-- <ng-error *ngIf="fTextareaControl?.hasError('minLength')" message=""></ng-error> -->
+    </div>
+    @if (!btnDisabled) {
+      <button class="btn">Подать заявку</button>
+    }
+  </form>
+</div>
+@if (modal) {
+  <app-modal [info]="text" (appClickOutside)="closeModal()" [error]="error"></app-modal>
+}

@@ -68,6 +68,7 @@ a {
   --color-black: #000;
   --color-CACACA: #cacaca;
   --transition: 0.2s ease-in-out;
+  --ease: cubic-bezier(.6, 0, .2, 1);
 }
 
 body {

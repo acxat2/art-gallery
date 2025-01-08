@@ -1,5 +1,5 @@
 <div class="container">
-  <h2 class="title">Войдите, чтоб вам были доступны дополнительные возможности</h2>
+  <h3 class="title">Войдите, чтоб вам были доступны дополнительные возможности</h3>
 
   <form class="form" [formGroup]="checkForm" (ngSubmit)="sendForm()">
     <div class="form-group">
@@ -15,7 +15,7 @@
       <ng-error *ngIf="fNameControl?.hasError('pattern')" message="Не валидное имя"></ng-error>
     </div>
     <div class="form-group">
-      <label for="" class="form-label">Пароль (дата рождения)</label>
+      <label for="" class="form-label">Дата рождения</label>
       <p-inputMask
         type="text"
         mask="99.99.9999"
@@ -27,6 +27,13 @@
         />
       <ng-error *ngIf="fPasswordControl?.hasError('pattern')" message="Не валидный пароль"></ng-error>
     </div>
-    <p-button (onClick)="sendForm()" label="Войти"></p-button>
+    <button class="btn">Войти</button>
   </form>
+  <div class="align-center">
+    <p>Вы ещё не с нами? <a routerLink="/registration" class="link">Зарегистрироваться</a></p>
+  </div>
 </div>
+@if (modal) {
+  <app-modal info="Не все поля заполнены" (appClickOutside)="closeModal()" [error]="true"></app-modal>
+}
+

@@ -6,6 +6,9 @@ import { AuthService } from '../../services/auth.service';
 import { InputMaskModule } from 'primeng/inputmask'
 import { ButtonModule } from 'primeng/button'
 import { InputTextModule } from 'primeng/inputtext';
+import { ModalComponent } from '../../components/modal/modal.component';
+import { RouterModule } from '@angular/router';
+import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 
 @Component({
   selector: 'app-login',
@@ -17,12 +20,16 @@ import { InputTextModule } from 'primeng/inputtext';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    InputTextModule
+    InputTextModule,
+    ModalComponent,
+    RouterModule,
+    ClickOutsideDirective
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  public modal = false;
 
   public checkForm: FormGroup = this.fb.group({
     name: ['', [
@@ -44,14 +51,17 @@ export class LoginComponent {
     return this.checkForm.get('password');
   }
 
-public sendForm() {
-  if (!this.fNameControl?.errors && !this.fPasswordControl?.errors) {
-    this.authService.isAuthIn({name: this.checkForm.get('name')?.value, birthday: this.checkForm.get('password')?.value})
-  } else {
-    alert('Не заполнены поля')
+  public sendForm() {
+    if (!this.fNameControl?.errors && !this.fPasswordControl?.errors) {
+      this.authService.isAuthIn({name: this.checkForm.get('name')?.value, birthday: this.checkForm.get('password')?.value})
+    } else {
+      this.modal = true
+    }
   }
 
-}
+  public closeModal() {
+    this.modal = false
+  }
 
   constructor(
     private authService: AuthService,

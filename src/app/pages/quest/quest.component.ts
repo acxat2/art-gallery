@@ -84,10 +84,8 @@ export class QuestComponent {
   public answer() {
     let question = this.questions[this.questionsCount];
     const right = question.answer;
-    console.log('answer',  this.questions[this.questionsCount]);
 
     const answer = this.fAnswerControl?.value.toLowerCase();
-    console.log(this.fAnswerControl)
     if (!answer) {
       alert('Вы ничего не ввели');
       return
@@ -169,7 +167,6 @@ export class QuestComponent {
       }
 
       this.question$.next(this.questions[this.questionsCount]);
-      console.log('start',  this.questions[this.questionsCount])
     }
 
     if (questStart && JSON.parse(questStart) === true) {

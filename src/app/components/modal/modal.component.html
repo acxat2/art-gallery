@@ -1,8 +1,16 @@
-<div class="modal-info-container container">
+<div class="modal-info-container" style="width: calc(100vw - 20px);">
   <div (appClickOutside)="clickOutside()"
     class="modal-info"
     [class.modal-error]="error"
+    [style.marginTop]="top + 'px'"
+    [class.btn-out]="out"
   >
-    <p class="text">{{info}}</p>
+  <p class="text">{{info}}</p>
+  @if (confirmIn) {
+    <div class="btn-contauner">
+      <button class="btn-confirm yes" (click)="confirm(true)">Да</button>
+      <button class="btn-confirm no" (click)="confirm(false)">Нет</button>
+    </div>
+  }
   </div>
 </div>

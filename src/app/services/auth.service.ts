@@ -12,6 +12,22 @@ export type Modal = {
   modalText: string
 }
 
+export type AuthState = {
+  modal: {
+    active: boolean,
+    error: boolean,
+    modalText: string
+  },
+  userName: string,
+  guards: {
+    default: boolean,
+    isAuth: boolean,
+    authQuest: boolean,
+    authNewYear: boolean
+  }
+
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,14 +47,37 @@ export class AuthService {
   };
   private STORAGEKEY = 'art-studio';
 
-  public default$ = new BehaviorSubject<boolean>(true);
+  // private authState = {
+  //   modal: {
+  //     active: false,
+  //     error: false,
+  //     modalText: ''
+  //   },
+  //   userName: '',
+  //   guards: {
+  //     default: true,
+  //     isAuth: false,
+  //     authQuest: auth.isQuestIn,
+  //     authNewYear: auth.newYearIn
+  //   }
+  // }
+
+  // public authState$ = new BehaviorSubject<AuthState>(this.authState)
+
   public modal$ = new BehaviorSubject<Modal>(this.modal);
-  public isAuth$ = new BehaviorSubject<boolean>(false);
   public userName$ = new BehaviorSubject<string>(this.userName);
+  public default$ = new BehaviorSubject<boolean>(true);
+  public isAuth$ = new BehaviorSubject<boolean>(false);
   public authQuest$ = new BehaviorSubject<boolean>(auth.isQuestIn)
+  public authNewYear$ = new BehaviorSubject<boolean>(auth.newYearIn)
 
   public isAuthIn(user: User): void {
-    const findUser= users.find(us => us.name === user.name);
+    let findUser!:User;
+    users.forEach(us => {
+      if (us.name === user.name && us.birthday === user.birthday) {
+        findUser = us
+      }
+    });
 
     if (!findUser) {
       this.modal.modalText = 'Такой пользователь не зарегистрирован';
@@ -59,6 +98,11 @@ export class AuthService {
       this.authQuest$.next(auth.isQuestIn);
     }
 
+    if (findUser.role === 'admin' || this.today === '01.01' || this.today === '02.01' || this.today === '03.01' || this.today === '04.01' || this.today === '05.01' || this.today === '07.12') {
+      auth.newYearIn = true;
+      this.authNewYear$.next(auth.newYearIn)
+    }
+
     auth.isLoggedIn = true;
     this.userName = user.name;
     this.userName$.next(this.userName);
@@ -77,9 +121,11 @@ export class AuthService {
     this.userName$.next(this.userName);
     auth.isQuestIn = false;
     this.authQuest$.next(auth.isQuestIn);
+    auth.newYearIn = false;
+    this.authNewYear$.next(auth.newYearIn);
 
     this.storage.saveToStorage(this.STORAGEKEY, '');
-    location.reload()
+    location.reload();
   }
 
   private modalActive(text: string, error: boolean) {
@@ -107,6 +153,21 @@ export class AuthService {
         auth.isQuestIn = true;
       } else {
         auth.isQuestIn = false;
+      }
+
+      if (user.role === 'admin'
+         || this.today === '01.01'
+         || this.today === '02.01'
+         || this.today === '03.01'
+         || this.today === '04.01'
+         || this.today === '05.01'
+         || this.today === '06.01'
+         || this.today === '07.01'
+         || this.today === '08.01'
+         || this.today === '09.01'
+         || this.today === '10.01') {
+        auth.newYearIn = true;
+        this.authNewYear$.next(auth.newYearIn)
       }
 
       this.isAdultFun(user);

@@ -322,15 +322,15 @@ export const gallery: IPicture[] = [
     author: 'Алина'
   },
 
-  {
-    id: 37,
-    name: 'Девушка с японской обложки',
-    fileName: '3.jpg',
-    toWhom: ToWhom.another,
-    year: 2002,
-    author: 'Папа',
-    adult: true
-  },
+  // {
+  //   id: 37,
+  //   name: 'Девушка с японской обложки',
+  //   fileName: '3.jpg',
+  //   toWhom: ToWhom.another,
+  //   year: 2002,
+  //   author: 'Папа',
+  //   adult: true
+  // },
   {
     id: 38,
     name: 'Выпускной',
@@ -381,6 +381,14 @@ export const gallery: IPicture[] = [
     fileName: 'photo_2024-11-24_17-43-15 (2).jpg',
     event: Holiday.birthday,
     year: 2024,
+    author: 'Алина'
+  },
+  {
+    id: 44,
+    name: 'Дипломная работа',
+    fileName: 'IMG_1604.jpg',
+    event: Holiday.artSchool,
+    year: 2022,
     author: 'Алина'
   },
 ]

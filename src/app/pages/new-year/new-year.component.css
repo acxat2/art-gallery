@@ -1,0 +1,151 @@
+i {
+  color: rgb(99, 82, 82);
+}
+
+.greeting {
+  padding: 10px;
+  text-align: center;
+  animation: opacity 1s 1 ease-in-out;
+}
+
+.greeting__text {
+  text-indent: 1em;
+}
+
+.greeting__btn {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section__quest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px;
+  padding-bottom: 20px;
+  text-align: center;
+}
+
+.quest__count-down {
+  padding-top: 100px;
+  font-size: 100px;
+  color: blueviolet;
+  font-weight: 700;
+  letter-spacing: 8px;
+  margin-bottom: 20px;
+  position: relative;
+  animation: pulse 1s 6 ease-in-out;
+}
+
+.quest__body {
+  animation: opacity 1s 1 ease-in-out;
+}
+
+.body__text {
+  margin-top: 0;
+  font-style: italic;
+}
+
+.img-container {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 500px;
+}
+
+.img {
+  margin-bottom: 10px;
+}
+
+.body__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-input {
+  margin-bottom: 20px;
+  padding: 5px 10px;
+  min-width: 230px;
+  text-align: center;
+  border: 1px solid gray;
+  border-radius: 5px;
+  outline: none;
+}
+
+.form-input::placeholder {
+  text-align: center;
+}
+
+.body__btn {
+  margin-bottom: 20px;
+}
+
+.block {
+  display: block;
+}
+
+.btn-hint {
+  margin-bottom: 10px;
+  background-color: rgb(247, 179, 243);
+}
+
+.congratulation {
+  margin-top: 50px;
+  font-size: 25px;
+  animation: opacityTransition 3s 1 ease-in-out;
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  color: #777;
+  font-size: 10px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+  20% {
+      transform: scale(2);
+      opacity: 1;
+  }
+  100% {
+      opacity: 0;
+  }
+}
+
+@keyframes opacity {
+  0% {
+    opacity: 0;
+  }
+  /* 30% {
+    opacity: 0.5;
+  } */
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes opacityTransition {
+  0% {
+    opacity: 0;
+    transform: scale(1.2)
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2)
+  }
+}

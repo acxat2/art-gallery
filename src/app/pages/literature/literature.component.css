@@ -18,6 +18,11 @@
   text-indent: 20px;
 }
 
+.img-container {
+  width: 100%;
+  text-align: center;
+}
+
 img {
   margin-top: 10px;
   margin-bottom: 10px;

@@ -1,0 +1,57 @@
+<div class="greeting"><app-year-svg></app-year-svg></div>
+<div class="greeting" *ngIf="greeting$ | async">
+  <h2 class="greeting__title">С наступившим Новым годом <i>{{userName$ | async}}</i>&nbsp;!</h2>
+  <p class="greeting__text">Дорогой друг! Пусть этот год принесет тебе множество замечательных моментов, сюрпризов и подарков. Пусть исполнятся самые заветные твои мечты, сбудутся желания, воплотятся надежды. Радуйся каждому новому дню, улыбайся и верь в чудо. Ведь хорошее настроение — это залог здоровья, процветания и вдохновения. Мира и уюта твоему дому.</p>
+  <p>По этому случаю я приготовил небольшое развлечение для тебя, твоей семьи и друзей, которые сейчас рядом, и если ты готов поразгадывать загадки, жми "<b>Начать</b>"</p>
+  <button class="greeting__btn btn" (click)="start()">Начать</button>
+</div>
+
+<section class="section__quest quest">
+  <div class="quest__body" *ngIf="quest$ | async">
+    <ng-container *ngIf="question$ | async as question">
+      <p class="body__text">{{question.text}}</p>
+      <div class="img-container">
+        <img class="img" *ngIf="question.picture" [src]="question.picture" alt="picture">
+      </div>
+      <form *ngIf="question.answer !== ''; else next" class="body__form" [formGroup]="answerForm" (ngSubmit)="answer()">
+        <input
+          class="body__input form-input"
+          type="text"
+          name="questionAnswer"
+          [placeholder]="question.placeholder || 'Введите ответ для продолжения'"
+          formControlName="questionAnswer"
+        >
+        <div class="btn-container" >
+          <button class="btn body__btn">Ответить</button>
+        </div>
+      </form>
+    </ng-container>
+  </div>
+  <button class="btn btn-hint" *ngIf="hintBtn$ | async" (click)="hintActive()">Подсказка</button>
+  <div class="hint">
+    <i *ngIf="countHint$ | async">Подсказка откроется через: {{countH}}с</i>
+    <span *ngIf="hint$ | async">{{hintText$ | async}}</span>
+  </div>
+  <div class="congratulation-container">
+    <p class="congratulation" *ngIf="congratulationActive$ | async">
+      {{congratulation$ | async}}
+    </p>
+  </div>
+  <app-modal *ngIf="modal" [info]="modalText" [error]="true" [top]="16" (outside)="closeModal()"></app-modal>
+
+  <div *ngIf="finish$ | async">
+    <img src="assets/pictures/newyear/newYear.jpg" alt="С новым годом!!!">
+    <p class="p-text-secondary">Поздравляю! Вы прошли все испытания. Надеюсь, это немного добавило вам новогоднего настроения. Если захотите повторить, обновите страницу.</p>
+  </div>
+</section>
+<!-- <div *ngIf="user.role === 'admin'">
+  <button (click)="clear()">Очистить кеш</button>
+  <pre>{{questions | json}}</pre>
+</div> -->
+
+<ng-template #next>
+  <div class="body__form">
+    <button (click)="nextt()" class="btn body__btn">Дальше</button>
+  </div>
+</ng-template>
+

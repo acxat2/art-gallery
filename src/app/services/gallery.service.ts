@@ -38,12 +38,10 @@ export class GalleryService {
     }).filter(p => this.authService.isAdult ? p : p.adult ? null : p);
   }
 
-  public setGallery(): void {
-    console.log('!!! - set sorting')
-
-    this.sortGallery();
-    this.galleryState$.next(this.galleryState)
-  }
+  // public setGallery(): void {
+  //   this.sortGallery();
+  //   this.galleryState$.next(this.galleryState);
+  // }
 
   public next(id: number): IPicture {
     const index = this.galleryState.findIndex(p => p.id === id);
