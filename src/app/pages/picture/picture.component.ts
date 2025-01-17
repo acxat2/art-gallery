@@ -27,14 +27,6 @@ export class PictureComponent implements DoCheck {
     this.router.navigate(['picture', this.id]);
   }
 
-  public next1() {
-    console.log('next')
-  }
-
-  public prev1() {
-    console.log('prev')
-  }
-
   public prev() {
     this.id = this.gallery.prev(+this.id).id;
     this.router.navigate(['picture', this.id]);
