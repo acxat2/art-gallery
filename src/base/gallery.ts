@@ -391,4 +391,20 @@ export const gallery: IPicture[] = [
     year: 2022,
     author: 'Алина'
   },
+  {
+    id: 45,
+    name: 'Письмо солдату ',
+    fileName: 'СВО 11.12 .jpg',
+    event: Holiday.holiday,
+    year: 2024,
+    author: 'Даниил'
+  },
+  {
+    id: 46,
+    name: 'Новый год 2025',
+    fileName: 'нг 2025.jpg',
+    event: Holiday.holiday,
+    year: 2024,
+    author: 'Алина'
+  },
 ]

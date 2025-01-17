@@ -1,6 +1,6 @@
 <div class="picture-container">
   <h3>{{ picture.name }}</h3>
-  <div class="image-container">
+  <div appSwipe (next)="next()" (previous)="prev()" class="image-container">
     <img src="../../../assets/pictures/{{picture.fileName}}" [alt]="picture.name">
     <div class="btn-group">
       <button class="btn-nav" (click)="prev()"></button>

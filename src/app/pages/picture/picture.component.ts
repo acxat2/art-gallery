@@ -4,11 +4,12 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IPicture } from '../../../base/gallery';
 import { GalleryService } from '../../services/gallery.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { SwipeDirective } from '../../directives/swipe.directive';
 
 @Component({
   selector: 'app-picture',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, RouterModule],
+  imports: [CommonModule, TranslatePipe, RouterModule, SwipeDirective],
   templateUrl: './picture.component.html',
   styleUrl: './picture.component.css'
 })
@@ -24,6 +25,14 @@ export class PictureComponent implements DoCheck {
   public next() {
     this.id = this.gallery.next(+this.id).id;
     this.router.navigate(['picture', this.id]);
+  }
+
+  public next1() {
+    console.log('next')
+  }
+
+  public prev1() {
+    console.log('prev')
   }
 
   public prev() {
