@@ -21,7 +21,7 @@ export interface IPicture {
   event?: Holiday;
   toWhom?: ToWhom;
   author: 'Алина' | 'Даниил' | 'Папа';
-  adult?: boolean
+  admin?: boolean
 }
 
 export const gallery: IPicture[] = [
@@ -322,15 +322,14 @@ export const gallery: IPicture[] = [
     author: 'Алина'
   },
 
-  // {
-  //   id: 37,
-  //   name: 'Девушка с японской обложки',
-  //   fileName: '3.jpg',
-  //   toWhom: ToWhom.another,
-  //   year: 2002,
-  //   author: 'Папа',
-  //   adult: true
-  // },
+  {
+    id: 37,
+    name: 'Девушка с японской обложки',
+    fileName: '3.jpg',
+    toWhom: ToWhom.another,
+    year: 2002,
+    author: 'Папа',
+  },
   {
     id: 38,
     name: 'Выпускной',
