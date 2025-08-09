@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { dateFormate } from '../helpers/date-format';
+import { env } from '../../../environment/tg-env';
 
 export type IStore = {
   name: string;
@@ -14,8 +15,8 @@ export type IStore = {
 
 export class TelegramService {
 
-  private TOKEN = '7620505652:AAFMEvBgYODBGq77OHyxaujmHIkKX3CxXT4';
-  private chatID = '-4700772482';
+  private TOKEN = env['TG-TOKEN']
+  private chatID = env['CHAT-ID'];
   private URL = `https://api.telegram.org/bot${this.TOKEN}/sendMessage?chat_id=${this.chatID}&parse_mode=html&text=`
 
   public async setData(request: IStore) {

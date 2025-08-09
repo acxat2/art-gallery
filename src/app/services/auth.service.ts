@@ -33,7 +33,8 @@ export type AuthState = {
 })
 
 export class AuthService {
-  public isAdult = false;
+  // public isAdult = false;
+  public isAdmin = false;
   private userName = '';
 
   private date = new Date();
@@ -74,7 +75,7 @@ export class AuthService {
   public isAuthIn(user: User): void {
     let findUser!:User;
     users.forEach(us => {
-      if (us.name === user.name && us.birthday === user.birthday) {
+      if (us.name.trim() === user.name && us.birthday.trim() === user.birthday) {
         findUser = us
       }
     });
@@ -91,7 +92,7 @@ export class AuthService {
       return;
     }
 
-    this.isAdultFun(findUser);
+    this.isAdminFun(findUser);
 
     if (findUser.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
       auth.isQuestIn = true;
@@ -170,7 +171,7 @@ export class AuthService {
         this.authNewYear$.next(auth.newYearIn)
       }
 
-      this.isAdultFun(user);
+      this.isAdminFun(user);
       auth.isLoggedIn = true;
 
       this.authQuest$.next(auth.isQuestIn);
@@ -181,9 +182,16 @@ export class AuthService {
     }
   }
 
-  private isAdultFun(user: User): void {
-    if (getFullYear(user.birthday) >= 18 && user.role !== 'user') {
-      this.isAdult = true;
+  private isAdminFun(user: User): void {
+    if (user.role === 'admin') {
+      this.isAdmin = true;
     }
   }
+
+  // private isAdultFun(user: User): void {
+  //   if (getFullYear(user.birthday) >= 18 && user.role !== 'user') {
+  //     this.isAdult = true;
+  //   }
+  // }
+
 }

@@ -35,7 +35,7 @@ export class GalleryService {
         if (a.year <b.year) return -1;
       }
       return -1;
-    }).filter(p => this.authService.isAdult ? p : p.adult ? null : p);
+    }).filter(p => this.authService.isAdmin ? p : p.admin ? null : p);
   }
 
   // public setGallery(): void {

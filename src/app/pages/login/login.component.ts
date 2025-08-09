@@ -53,7 +53,7 @@ export class LoginComponent {
 
   public sendForm() {
     if (!this.fNameControl?.errors && !this.fPasswordControl?.errors) {
-      this.authService.isAuthIn({name: this.checkForm.get('name')?.value, birthday: this.checkForm.get('password')?.value})
+      this.authService.isAuthIn({name: this.checkForm.get('name')?.value.trim(), birthday: this.checkForm.get('password')?.value.trim()})
     } else {
       this.modal = true
     }

@@ -24,7 +24,7 @@
     </div>
     <div class="header__right">
       <button *ngIf="!(userIn$ | async); else out" (click)="enter()" class="header__input-btn" aria-label="Вход в аккаунт">
-        Войти
+        Авторизация
       </button>
       <div *ngIf="name$ | async as name">{{name}}</div>
     </div>

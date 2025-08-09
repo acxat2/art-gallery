@@ -21,7 +21,7 @@ export interface IPicture {
   event?: Holiday;
   toWhom?: ToWhom;
   author: 'Алина' | 'Даниил' | 'Папа';
-  adult?: boolean
+  admin?: boolean
 }
 
 export const gallery: IPicture[] = [
@@ -322,15 +322,15 @@ export const gallery: IPicture[] = [
     author: 'Алина'
   },
 
-  // {
-  //   id: 37,
-  //   name: 'Девушка с японской обложки',
-  //   fileName: '3.jpg',
-  //   toWhom: ToWhom.another,
-  //   year: 2002,
-  //   author: 'Папа',
-  //   adult: true
-  // },
+  {
+    id: 37,
+    name: 'Девушка с японской обложки',
+    fileName: '3.jpg',
+    toWhom: ToWhom.another,
+    year: 2002,
+    author: 'Папа',
+    admin: true
+  },
   {
     id: 38,
     name: 'Выпускной',
@@ -389,6 +389,22 @@ export const gallery: IPicture[] = [
     fileName: 'IMG_1604.jpg',
     event: Holiday.artSchool,
     year: 2022,
+    author: 'Алина'
+  },
+  {
+    id: 45,
+    name: 'Письмо солдату ',
+    fileName: 'СВО 11.12 .jpg',
+    event: Holiday.holiday,
+    year: 2024,
+    author: 'Даниил'
+  },
+  {
+    id: 46,
+    name: 'Новый год 2025',
+    fileName: 'нг 2025.jpg',
+    event: Holiday.holiday,
+    year: 2024,
     author: 'Алина'
   },
 ]

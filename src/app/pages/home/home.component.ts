@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
 })
 
 export class HomeComponent {
-  public pre2025 = now >= dateNewYearActive && now < '2025.01.10' ? false : true;
+  public pre2025 = now >= dateNewYearActive && now < '2025.12.10' ? false : true;
   public newYearActive = auth.newYearIn
   public logIn = auth.isLoggedIn
 }
