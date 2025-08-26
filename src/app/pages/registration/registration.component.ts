@@ -37,7 +37,7 @@ export class RegistrationComponent {
   public checkForm: FormGroup = this.fb.group({
     name: ['', [
       Validators.required,
-      Validators.pattern("[A-ZА-Я][a-zа-я]*")
+      Validators.pattern(" *[A-ZА-Я][a-zа-я]* *")
     ]],
 
     birthday: ['', [

@@ -138,4 +138,9 @@ export const users: User[] = [
     birthday: '15.11.1982',
     role: 'user'
   },
+  {
+    name: 'Сергей',
+    birthday: '26.11.1973',
+    role: 'friend'
+  },
 ]
