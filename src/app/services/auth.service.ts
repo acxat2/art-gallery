@@ -1,12 +1,11 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
 import { url } from '../../../environment/url-env';
 import { auth } from '../guards/auth';
 import { TAuthUser, TUserReg, TUser } from '../types';
 import { HttpService } from './http.service';
 import { TelegramService } from './telegram.service';
-import { StorageService } from './storage.service';
 
 export type Modal = {
   active: boolean,
@@ -52,8 +51,6 @@ export class AuthService implements OnInit {
     error: false,
     modalText: ''
   };
-
-  private sessionId: string | null = null
 
   // private STORAGEKEY = 'art-studio';
 
@@ -108,7 +105,7 @@ export class AuthService implements OnInit {
   }
 
   public isAuthIn(authUser: TAuthUser): void {
-    const user$: Observable<{user: TUser, sessionId: string}> = this.httpService.postHttp(`${URL}/api/login`, authUser);
+    const user$: Observable<{user: TUser}> = this.httpService.postHttp(`${URL}/api/login`, authUser);
 
     try {
       user$.pipe(catchError((error: any) => {
@@ -120,13 +117,6 @@ export class AuthService implements OnInit {
         this.modal.active = true;
         this.modal.error = true;
         return throwError(() => error)
-      }),tap(res => {
-        if (res.sessionId) {
-          // this.sessionId = res.sessionId
-          console.log(res.sessionId)
-
-          this.storage.saveToStorage('sessionId', res.sessionId)
-        }
       }), map(data => data.user))
       .subscribe((user)  => {
         this.isAdminFun(user);
@@ -135,6 +125,8 @@ export class AuthService implements OnInit {
         this.userName$.next(this.userName);
         this.router.navigate(['']);
         this.isAuth$.next(true);
+
+        console.log(document.cookie)
 
         this.modalActive(`Добро пожаловать ${user.username}`, false);
 
@@ -183,7 +175,6 @@ export class AuthService implements OnInit {
         this.authQuest$.next(auth.isQuestIn);
         auth.newYearIn = false;
         this.authNewYear$.next(auth.newYearIn);
-        this.storage.clearStorage()
         location.reload();
       })
     } catch(err) {
@@ -208,44 +199,37 @@ export class AuthService implements OnInit {
   constructor(
     private router: Router,
     private httpService: HttpService,
-    private telegram: TelegramService,
-    private storage: StorageService
+    private telegram: TelegramService
   ) {
     this.isAdmin = false
-    this.httpService.getHttp(`${URL}/api`).subscribe((res) => {
-      console.log(res)
-      const sessionId = document.cookie.split('sessionId=')[1];
+    console.log('before if', document.cookie.split('sessionId=')[1])
+    if (document.cookie.split('sessionId=')[1]) {
+      console.log('in if:', document.cookie.split('sessionId=')[1])
+      const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL}/api/user`)
+      try {
+        user$.pipe(catchError((error: any) => {
+          this.modal.modalText = 'Что-то пошло не так';
+          this.modal.active = true;
+          this.modal.error = true;
+          return throwError(() => error)
+        }),
+        map(data => data.data)).subscribe((user)  => {
+          this.isAdminFun(user);
+          auth.isLoggedIn = true;
+          this.userName = user.username;
+          this.userName$.next(this.userName);
+          this.router.navigate(['']);
+          this.isAuth$.next(true);
 
-      console.log('after test', document.cookie.split('sessionId=')[1])
-      setTimeout(() => console.log('document.cookie', document.cookie), 5000)
-      if (sessionId) {
-
-        const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL}/api/user`)
-        try {
-          user$.pipe(catchError((error: any) => {
-            this.modal.modalText = 'Что-то пошло не так';
-            this.modal.active = true;
-            this.modal.error = true;
-            return throwError(() => error)
-          }),
-          map(data => data.data)).subscribe((user)  => {
-            this.isAdminFun(user);
-            auth.isLoggedIn = true;
-            this.userName = user.username;
-            this.userName$.next(this.userName);
-            this.router.navigate(['']);
-            this.isAuth$.next(true);
-
-            if (user.role === 'admin' || this.todayByControl === intlDateControl.format(new Date('1986-11-01'))) {
-              auth.isQuestIn = true;
-              this.authQuest$.next(auth.isQuestIn);
-            }
-          })
-        } catch (err) {
-          console.error(err)
-        }
+          if (user.role === 'admin' || this.todayByControl === intlDateControl.format(new Date('1986-11-01'))) {
+            auth.isQuestIn = true;
+            this.authQuest$.next(auth.isQuestIn);
+          }
+        })
+      } catch (err) {
+        console.error(err)
       }
-    })
+    }
 
     // const userStorage = this.storage.getFromStorage(this.STORAGEKEY);
     // if (userStorage) {
