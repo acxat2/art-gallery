@@ -17,7 +17,7 @@ export class GalleryService {
   public toWhomValue = '';
   public authorValue = '';
 
-  private gallerySource : IPicture[] = this.sortGallery();
+  private gallerySource : IPicture[] = [];
 
   private galleryState = this.gallerySource;
 
@@ -27,15 +27,26 @@ export class GalleryService {
     return this.galleryState.find(p => p.id === id) as IPicture
   }
 
-  private sortGallery(): IPicture[] {
-    return gallery.sort((a, b) => {
+  private sortGallery(): void {
+    function sortG(g: IPicture[]) {
+      return g.sort((a, b) => {
       if (a.year && b.year) {
         if (a.year > b.year) return 1;
         if (a.year == b.year) return 0;
-        if (a.year <b.year) return -1;
+        if (a.year < b.year) return -1;
       }
       return -1;
-    }).filter(p => this.authService.isAdmin ? p : p.admin ? null : p);
+    })
+    }
+    const galleryInit = this.authService.isAdmin$.subscribe(admin => {
+      const state = sortG(gallery.filter(p => admin ? p : p.admin ? null : p))
+      this.gallerySource = this.galleryState = state;
+      this.galleryState$.next(this.gallerySource)
+    })
+
+    setTimeout(() => {
+      galleryInit.unsubscribe()
+    }, 5000)
   }
 
   // public setGallery(): void {
@@ -157,5 +168,6 @@ export class GalleryService {
     private authService: AuthService,
     private router: Router
   ) {
+    this.sortGallery()
     }
 }

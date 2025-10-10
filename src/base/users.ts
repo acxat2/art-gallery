@@ -1,10 +1,15 @@
 type role = 'user' | 'family' | 'friend' | 'admin'
 
-export type User = {
+export type TUser = {
   name: string,
-  birthday: string,
-  role?: role,
+  birthday: string
+  login: string
+  password: string
+  role?: role
 }
+
+export type User = Omit<TUser, 'login' | 'password'>
+export type TAuthUser = Pick<TUser, 'login' | 'password'>
 
 export const users: User[] = [
   {

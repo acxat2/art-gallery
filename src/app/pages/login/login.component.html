@@ -3,29 +3,28 @@
 
   <form class="form" [formGroup]="checkForm" (ngSubmit)="sendForm()">
     <div class="form-group">
-      <label for="" class="form-label">Имя *</label>
+      <label for="login" class="form-label">Логин *</label>
       <input
+        id="login"
         type="text"
         class="form-input"
-        name="name"
+        name="login"
         pInputText
-        placeholder="User"
-        formControlName="name"
+        formControlName="login"
       >
-      <ng-error *ngIf="fNameControl?.hasError('pattern')" message="Не валидное имя"></ng-error>
+      <!-- <ng-error *ngIf="fLoginControl?.hasError('pattern')" message="Не валидный логин"></ng-error> -->
     </div>
     <div class="form-group">
-      <label for="" class="form-label">Дата рождения</label>
-      <p-inputMask
-        type="text"
-        mask="99.99.9999"
+      <label for="password" class="form-label">Пароль *</label>
+      <input
+        id="password"
+        type="password"
         name="password"
-        class="input"
-        [style]="{'width': '100%', 'padding': '5px 10px'}"
-        placeholder="01.01.2000"
+        class="form-input"
+        pInputText
         formControlName="password"
         />
-      <ng-error *ngIf="fPasswordControl?.hasError('pattern')" message="Не валидный пароль"></ng-error>
+      <!-- <ng-error *ngIf="fPasswordControl?.hasError('pattern')" message="Не валидный пароль"></ng-error> -->
     </div>
     <button class="btn">Войти</button>
   </form>
@@ -34,6 +33,6 @@
   </div>
 </div>
 @if (modal) {
-  <app-modal info="Не все поля заполнены" (appClickOutside)="closeModal()" [error]="true"></app-modal>
+  <app-modal info="Не все поля корректно заполнены" (appClickOutside)="closeModal()" [error]="true"></app-modal>
 }
 

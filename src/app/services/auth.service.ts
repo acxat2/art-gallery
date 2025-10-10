@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-import { User, users } from '../../base/users';
+import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
+import { url } from '../../../environment/url-env';
 import { auth } from '../guards/auth';
-import { getFullYear } from '../helpers/helpers';
+import { TAuthUser, TUserReg, TUser } from '../types';
+import { HttpService } from './http.service';
+import { TelegramService } from './telegram.service';
 import { StorageService } from './storage.service';
 
 export type Modal = {
@@ -25,30 +27,37 @@ export type AuthState = {
     authQuest: boolean,
     authNewYear: boolean
   }
-
 }
+
+export const URL = url['DEV'];
+
+const intlDateControl = new Intl.DateTimeFormat('ru', {day: '2-digit', month: '2-digit'})
+const intlDate = new Intl.DateTimeFormat('ru')
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class AuthService {
-  // public isAdult = false;
-  public isAdmin = false;
+
+export class AuthService implements OnInit {
+  public isAdult = false;
+  public isAdmin!: boolean;
   private userName = '';
 
   private date = new Date();
-  private today = `${this.date.getDate() > 9 ? this.date.getDate() : '0' + this.date.getDate()}.${this.date.getMonth() + 1}`
-
+  private todayByControl = intlDateControl.format(this.date);
 
   private modal = {
     active: false,
     error: false,
     modalText: ''
   };
-  private STORAGEKEY = 'art-studio';
 
-  // private authState = {
+  private sessionId: string | null = null
+
+  // private STORAGEKEY = 'art-studio';
+
+  // private authState: AuthState = {
   //   modal: {
   //     active: false,
   //     error: false,
@@ -69,67 +78,120 @@ export class AuthService {
   public userName$ = new BehaviorSubject<string>(this.userName);
   public default$ = new BehaviorSubject<boolean>(true);
   public isAuth$ = new BehaviorSubject<boolean>(false);
+  public isAdmin$ = new BehaviorSubject<boolean>(false);
   public authQuest$ = new BehaviorSubject<boolean>(auth.isQuestIn)
   public authNewYear$ = new BehaviorSubject<boolean>(auth.newYearIn)
 
-  public isAuthIn(user: User): void {
-    let findUser!:User;
-    users.forEach(us => {
-      if (us.name.trim() === user.name && us.birthday.trim() === user.birthday) {
-        findUser = us
-      }
-    });
+  public signup(data: TUserReg, comment: string) {
+    const reg$: Observable<any> = this.httpService.postHttp(`${URL}/api/signup`, data);
+    try {
+      reg$.pipe(catchError((err: any) => {
+        this.modal.modalText = "Что-то пошло не так";
+        this.modal.active = true;
+        this.modal.error = true;
+        console.log('ERROR catchError')
+        return throwError(() => err)
+      })).subscribe(() => {
+        this.modalActive('Спасибо за регистрацию! Теперь вам доступны все возможности сервиса')
 
-    if (!findUser) {
-      this.modal.modalText = 'Такой пользователь не зарегистрирован';
-      this.modal.active = true;
-      this.modal.error = true;
-      return;
+        this.telegram.setData(
+          {
+            name: data.username,
+            birthday: data.birthday,
+            comment,
+          }
+        )
+      })
+    } catch (err) {
+      console.error(err)
     }
+  }
 
-    if (findUser?.birthday !== user.birthday) {
-      this.modalActive('Не правильный пароль', true)
-      return;
+  public isAuthIn(authUser: TAuthUser): void {
+    const user$: Observable<{user: TUser, sessionId: string}> = this.httpService.postHttp(`${URL}/api/login`, authUser);
+
+    try {
+      user$.pipe(catchError((error: any) => {
+        let textError = 'Не привильный логин или пароль';
+        if(error.status === 0) {
+          textError = 'Нет связи с сервером'
+        }
+        this.modal.modalText = textError;
+        this.modal.active = true;
+        this.modal.error = true;
+        return throwError(() => error)
+      }),tap(res => {
+        if (res.sessionId) {
+          // this.sessionId = res.sessionId
+          console.log(res.sessionId)
+
+          this.storage.saveToStorage('sessionId', res.sessionId)
+        }
+      }), map(data => data.user))
+      .subscribe((user)  => {
+        this.isAdminFun(user);
+        auth.isLoggedIn = true;
+        this.userName = user.username;
+        this.userName$.next(this.userName);
+        this.router.navigate(['']);
+        this.isAuth$.next(true);
+
+        this.modalActive(`Добро пожаловать ${user.username}`, false);
+
+        if (user.role === 'admin' || this.todayByControl === intlDateControl.format(new Date('1986-11-01'))) {
+          auth.isQuestIn = true;
+          this.authQuest$.next(auth.isQuestIn);
+          setTimeout(() => this.modalActive(`С Днём Рождения!!!`, false), 5000)
+          setTimeout(() => this.modalActive(`Сегодня вам доступна бонусная страница "Quest"`, false), 10000)
+        }
+      })
+
+    // if (findUser.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
+    //   auth.isQuestIn = true;
+    //   this.authQuest$.next(auth.isQuestIn);
+    // }
+
+    // if (findUser.role === 'admin' || this.today === '01.01' || this.today === '02.01' || this.today === '03.01' || this.today === '04.01' || this.today === '05.01' || this.today === '07.12') {
+    //   auth.newYearIn = true;
+    //   this.authNewYear$.next(auth.newYearIn)
+    // }
+
+
+    // this.storage.saveToStorage(this.STORAGEKEY, JSON.stringify(findUser));
+    } catch (err) {
+      console.error(err)
     }
-
-    this.isAdminFun(findUser);
-
-    if (findUser.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
-      auth.isQuestIn = true;
-      this.authQuest$.next(auth.isQuestIn);
-    }
-
-    if (findUser.role === 'admin' || this.today === '01.01' || this.today === '02.01' || this.today === '03.01' || this.today === '04.01' || this.today === '05.01' || this.today === '07.12') {
-      auth.newYearIn = true;
-      this.authNewYear$.next(auth.newYearIn)
-    }
-
-    auth.isLoggedIn = true;
-    this.userName = user.name;
-    this.userName$.next(this.userName);
-    this.router.navigate(['']);
-    this.isAuth$.next(true);
-
-    this.storage.saveToStorage(this.STORAGEKEY, JSON.stringify(findUser));
-    this.modalActive(`Добро пожаловать ${findUser.name}`, false);
-
   }
 
   public isAuthOut() {
-    auth.isQuestIn = false;
-    this.isAuth$.next(false);
-    this.userName = '';
-    this.userName$.next(this.userName);
-    auth.isQuestIn = false;
-    this.authQuest$.next(auth.isQuestIn);
-    auth.newYearIn = false;
-    this.authNewYear$.next(auth.newYearIn);
+    const logout = this.httpService.getHttp(`${URL}/api/logout`)
 
-    this.storage.saveToStorage(this.STORAGEKEY, '');
-    location.reload();
+    try {
+      logout.pipe(catchError((err) => {
+        this.modal.modalText = "Что-то пошло не так";
+        this.modal.active = true;
+        this.modal.error = true;
+        console.log('Error:', err)
+        return throwError(() => err)
+      })).subscribe((res) => {
+        console.log('res', res)
+        auth.isQuestIn = false;
+        this.isAuth$.next(false);
+        this.userName = '';
+        this.userName$.next(this.userName);
+        auth.isQuestIn = false;
+        this.authQuest$.next(auth.isQuestIn);
+        auth.newYearIn = false;
+        this.authNewYear$.next(auth.newYearIn);
+        this.storage.clearStorage()
+        location.reload();
+      })
+    } catch(err) {
+      console.error(err)
+    }
   }
 
-  private modalActive(text: string, error: boolean) {
+  private modalActive(text: string, error: boolean = false) {
     this.modal.modalText = text;
     this.modal.active = true;
     this.modal.error = error;
@@ -145,46 +207,89 @@ export class AuthService {
 
   constructor(
     private router: Router,
-    private storage: StorageService,
+    private httpService: HttpService,
+    private telegram: TelegramService,
+    private storage: StorageService
   ) {
-    const userStorage = this.storage.getFromStorage(this.STORAGEKEY);
-    if (userStorage) {
-      const user: User = JSON.parse(userStorage);
-      if (user.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
-        auth.isQuestIn = true;
-      } else {
-        auth.isQuestIn = false;
+    this.isAdmin = false
+    this.httpService.getHttp(`${URL}/api`).subscribe((res) => {
+      console.log(res)
+      const sessionId = document.cookie.split('sessionId=')[1];
+
+      console.log('after test', document.cookie.split('sessionId=')[1])
+      setTimeout(() => console.log('document.cookie', document.cookie), 5000)
+      if (sessionId) {
+
+        const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL}/api/user`)
+        try {
+          user$.pipe(catchError((error: any) => {
+            this.modal.modalText = 'Что-то пошло не так';
+            this.modal.active = true;
+            this.modal.error = true;
+            return throwError(() => error)
+          }),
+          map(data => data.data)).subscribe((user)  => {
+            this.isAdminFun(user);
+            auth.isLoggedIn = true;
+            this.userName = user.username;
+            this.userName$.next(this.userName);
+            this.router.navigate(['']);
+            this.isAuth$.next(true);
+
+            if (user.role === 'admin' || this.todayByControl === intlDateControl.format(new Date('1986-11-01'))) {
+              auth.isQuestIn = true;
+              this.authQuest$.next(auth.isQuestIn);
+            }
+          })
+        } catch (err) {
+          console.error(err)
+        }
       }
+    })
 
-      if (user.role === 'admin'
-         || this.today === '01.01'
-         || this.today === '02.01'
-         || this.today === '03.01'
-         || this.today === '04.01'
-         || this.today === '05.01'
-         || this.today === '06.01'
-         || this.today === '07.01'
-         || this.today === '08.01'
-         || this.today === '09.01'
-         || this.today === '10.01') {
-        auth.newYearIn = true;
-        this.authNewYear$.next(auth.newYearIn)
-      }
+    // const userStorage = this.storage.getFromStorage(this.STORAGEKEY);
+    // if (userStorage) {
+    //   const user: User = JSON.parse(userStorage);
+    //   if (user.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
+    //     auth.isQuestIn = true;
+    //   } else {
+    //     auth.isQuestIn = false;
+    //   }
 
-      this.isAdminFun(user);
-      auth.isLoggedIn = true;
+    //   if (user.role === 'admin'
+    //      || this.today === '01.01'
+    //      || this.today === '02.01'
+    //      || this.today === '03.01'
+    //      || this.today === '04.01'
+    //      || this.today === '05.01'
+    //      || this.today === '06.01'
+    //      || this.today === '07.01'
+    //      || this.today === '08.01'
+    //      || this.today === '09.01'
+    //      || this.today === '10.01') {
+    //     auth.newYearIn = true;
+    //     this.authNewYear$.next(auth.newYearIn)
+    //   }
 
-      this.authQuest$.next(auth.isQuestIn);
-      this.userName = user.name;
-      this.userName$.next(this.userName);
+    //   this.isAdminFun(user);
+    //   auth.isLoggedIn = true;
 
-      this.isAuth$.next(true);
-    }
+    //   this.authQuest$.next(auth.isQuestIn);
+    //   this.userName = user.username;
+    //   this.userName$.next(this.userName);
+
+    //   this.isAuth$.next(true);
+    // }
   }
 
-  private isAdminFun(user: User): void {
+  ngOnInit() {
+    console.log('ngOnInit', document.cookie.split('sessionId=')[1])
+  }
+
+  private isAdminFun(user: TUser): void {
     if (user.role === 'admin') {
       this.isAdmin = true;
+      this.isAdmin$.next(true)
     }
   }
 
