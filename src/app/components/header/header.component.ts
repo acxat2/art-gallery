@@ -67,7 +67,6 @@ export class HeaderComponent {
   public confirmOut(event: boolean) {
     if (event === true) {
       this.authService.isAuthOut()
-      console.log('isAuthOut')
     }
     this.confirm = false;
   }

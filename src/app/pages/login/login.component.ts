@@ -30,7 +30,7 @@ import { ClickOutsideDirective } from '../../directives/click-outside.directive'
 })
 export class LoginComponent {
   public modal = false;
-  private loginPattern = /^[a-z]+([-_]?[a-z0-9]+){0,2}$/i;
+  private loginPattern = /^[a-zA-Z]+([-_]?[a-zA-Z0-9]+){0,2}$/i;
 
   public checkForm: FormGroup = this.fb.group({
     login: ['', [
@@ -55,7 +55,7 @@ export class LoginComponent {
     if (!this.fLoginControl?.errors && !this.fPasswordControl?.errors) {
       this.authService.isAuthIn(
         {
-          login: this.checkForm.get('login')?.value.trim(),
+          login: this.checkForm.get('login')?.value.trim().toLowerCase(),
           password: this.checkForm.get('password')?.value.trim()
         }
       )

@@ -1,27 +1,33 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, OnChanges, SimpleChanges } from '@angular/core';
+import { Observable, tap } from 'rxjs';
+import { StorageService } from './storage.service';
 
-const params = {
-  headers: new HttpHeaders({
-    'Content-type': 'application/json',
-  }),
-  withCredentials: true
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
-  public getHttp<T>(url: string): Observable<T> {
-    return this.httpClient.get<T>(url, params);
+  private headers = (sessionId: string) => new HttpHeaders({
+      'Content-type': 'application/json',
+      'Authorization': `Basic ${sessionId}`
+    })
+
+  public getHttp<T>(url: string, sessionId: string | null): Observable<T> {
+    const headers = new HttpHeaders({
+      'Content-type': 'application/json',
+      'Authorization': `Basic ${sessionId}`
+    })
+    return this.httpClient.get<T>(url, { headers });
   }
 
-  public postHttp<T>(url: string, body: object): Observable<T> {
-    return this.httpClient.post<T>(url, body, params);
+  public postHttp<T>(url: string, body: object, sessionId: string | null = null): Observable<T> {
+    const headers = new HttpHeaders({
+      'Content-type': 'application/json',
+      'Authorization': `Basic ${sessionId}`
+    })
+    return this.httpClient.post<T>(url, body, { headers })
   }
-
-
 
   constructor(private httpClient: HttpClient) { }
 }

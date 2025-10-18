@@ -49,7 +49,7 @@ export class RegistrationComponent {
 
     login: ['', [
       Validators.required,
-      Validators.pattern(/^[a-z]+([-_]?[a-z0-9]+){0,2}$/)
+      Validators.pattern(/^[a-zA-Z]+([-_]?[a-zA-Z0-9]+){0,2}$/)
     ]],
 
     password: ['', [
@@ -96,12 +96,12 @@ export class RegistrationComponent {
     const now = new Date().getFullYear()
 
     if (this.checkForm.status != "INVALID") {
-      const name = this.checkForm.get('name')?.value;
-      const birthday = this.checkForm.get('birthday')?.value;
-      const login = this.checkForm.get('login')?.value;
-      const password = this.checkForm.get('password')?.value;
-      const passwordRepeat = this.checkForm.get('passwordControl')?.value;
-      const comment = this.checkForm.get('textarea')?.value;
+      const name = this.checkForm.get('name')?.value.trim();
+      const birthday = this.checkForm.get('birthday')?.value.trim();
+      const login = this.checkForm.get('login')?.value.trim().toLowerCase();
+      const password = this.checkForm.get('password')?.value.trim();
+      const passwordRepeat = this.checkForm.get('passwordControl')?.value.trim();
+      const comment = this.checkForm.get('textarea')?.value.trim();
 
       const year = birthday.slice(0, 4);
       if (now - year <= 5) {
@@ -131,18 +131,11 @@ export class RegistrationComponent {
       }
 
       if (this.checkForm.status === "VALID") {
-        console.log('VALID')
         this.authService.signup(data, comment);
       } else {
         this.modal = true
       }
-      this.btnDisabled = true;
 
-      setTimeout(() => {
-        this.router.navigate(['/login'])
-      }, 5000)
-
-      // localStorage.setItem('reg', `${Date.now()}`)
     } else {
       this.text ='Поля не корректно или не все заполнены';
       this.modal = true;
@@ -154,7 +147,7 @@ export class RegistrationComponent {
   }
 
   constructor(
-    private telegram: TelegramService,
+    // private telegram: TelegramService,
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService

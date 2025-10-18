@@ -1,10 +1,11 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
 import { url } from '../../../environment/url-env';
 import { auth } from '../guards/auth';
-import { TAuthUser, TUserReg, TUser } from '../types';
+import { TAuthUser, TUser, TUserReg } from '../types';
 import { HttpService } from './http.service';
+import { StorageService } from './storage.service';
 import { TelegramService } from './telegram.service';
 
 export type Modal = {
@@ -28,7 +29,7 @@ export type AuthState = {
   }
 }
 
-export const URL = url['DEV'];
+export const URL = url['PROD'];
 
 const intlDateControl = new Intl.DateTimeFormat('ru', {day: '2-digit', month: '2-digit'})
 const intlDate = new Intl.DateTimeFormat('ru')
@@ -38,7 +39,7 @@ const intlDate = new Intl.DateTimeFormat('ru')
 })
 
 
-export class AuthService implements OnInit {
+export class AuthService {
   public isAdult = false;
   public isAdmin!: boolean;
   private userName = '';
@@ -83,10 +84,16 @@ export class AuthService implements OnInit {
     const reg$: Observable<any> = this.httpService.postHttp(`${URL}/api/signup`, data);
     try {
       reg$.pipe(catchError((err: any) => {
-        this.modal.modalText = "Что-то пошло не так";
         this.modal.active = true;
         this.modal.error = true;
-        console.log('ERROR catchError')
+        this.modal.modalText = "Что-то пошло не так";
+        if (err.status === 409) {
+          this.modal.modalText = `Пользователь с логином ${data.login} уже существует. Попробуйте другой логин`;
+        }
+        if(err.status === 0) {
+          this.modal.modalText = 'Нет связи с сервером'
+        }
+
         return throwError(() => err)
       })).subscribe(() => {
         this.modalActive('Спасибо за регистрацию! Теперь вам доступны все возможности сервиса')
@@ -98,6 +105,10 @@ export class AuthService implements OnInit {
             comment,
           }
         )
+
+        setTimeout(() => {
+          this.router.navigate(['/login'])
+        }, 5000)
       })
     } catch (err) {
       console.error(err)
@@ -108,16 +119,24 @@ export class AuthService implements OnInit {
     const user$: Observable<{user: TUser}> = this.httpService.postHttp(`${URL}/api/login`, authUser);
 
     try {
-      user$.pipe(catchError((error: any) => {
-        let textError = 'Не привильный логин или пароль';
-        if(error.status === 0) {
-          textError = 'Нет связи с сервером'
-        }
-        this.modal.modalText = textError;
-        this.modal.active = true;
-        this.modal.error = true;
-        return throwError(() => error)
-      }), map(data => data.user))
+      user$.pipe(
+        catchError((err: any) => {
+          this.modal.modalText = 'Не привильный логин или пароль';
+          if(err.status === 0) {
+            this.modal.modalText = 'Нет связи с сервером'
+          }
+          this.modal.active = true;
+          this.modal.error = true;
+          console.log('Error:', err)
+          return throwError(() => err)
+        }),
+        tap((res: any) => {
+          const sessionId = res.sessionId
+          if (sessionId) {
+            this.storage.saveToStorage('sessionId', sessionId)
+          }
+        }),
+        map(data => data.user))
       .subscribe((user)  => {
         this.isAdminFun(user);
         auth.isLoggedIn = true;
@@ -125,8 +144,6 @@ export class AuthService implements OnInit {
         this.userName$.next(this.userName);
         this.router.navigate(['']);
         this.isAuth$.next(true);
-
-        console.log(document.cookie)
 
         this.modalActive(`Добро пожаловать ${user.username}`, false);
 
@@ -138,35 +155,29 @@ export class AuthService implements OnInit {
         }
       })
 
-    // if (findUser.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
-    //   auth.isQuestIn = true;
-    //   this.authQuest$.next(auth.isQuestIn);
-    // }
-
-    // if (findUser.role === 'admin' || this.today === '01.01' || this.today === '02.01' || this.today === '03.01' || this.today === '04.01' || this.today === '05.01' || this.today === '07.12') {
-    //   auth.newYearIn = true;
-    //   this.authNewYear$.next(auth.newYearIn)
-    // }
-
-
-    // this.storage.saveToStorage(this.STORAGEKEY, JSON.stringify(findUser));
     } catch (err) {
       console.error(err)
     }
   }
 
   public isAuthOut() {
-    const logout = this.httpService.getHttp(`${URL}/api/logout`)
 
+    const sessionId = this.storage.getFromStorage('sessionId')
     try {
-      logout.pipe(catchError((err) => {
-        this.modal.modalText = "Что-то пошло не так";
-        this.modal.active = true;
-        this.modal.error = true;
-        console.log('Error:', err)
-        return throwError(() => err)
-      })).subscribe((res) => {
-        console.log('res', res)
+      const logout = this.httpService.getHttp(`${URL}/api/logout`, sessionId)
+      logout.pipe(
+        catchError((err) => {
+          this.modal.modalText = "Что-то пошло не так";
+          this.modal.active = true;
+          this.modal.error = true;
+          console.log('Error:', err)
+          return throwError(() => err)
+        }),
+        tap(() => {
+          this.storage.removeStorage('sessionId')
+        })
+      )
+      .subscribe(() => {
         auth.isQuestIn = false;
         this.isAuth$.next(false);
         this.userName = '';
@@ -199,19 +210,26 @@ export class AuthService implements OnInit {
   constructor(
     private router: Router,
     private httpService: HttpService,
-    private telegram: TelegramService
+    private telegram: TelegramService,
+    private storage: StorageService
   ) {
     this.isAdmin = false
-    console.log('before if', document.cookie.split('sessionId=')[1])
-    if (document.cookie.split('sessionId=')[1]) {
-      console.log('in if:', document.cookie.split('sessionId=')[1])
-      const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL}/api/user`)
+    const sessionId = storage.getFromStorage('sessionId')
+    if (sessionId) {
       try {
-        user$.pipe(catchError((error: any) => {
-          this.modal.modalText = 'Что-то пошло не так';
+        const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL}/api/user`, sessionId)
+        user$.pipe(catchError((err: any) => {
+          this.modal.modalText = 'Попробуйте войти снова';
           this.modal.active = true;
           this.modal.error = true;
-          return throwError(() => error)
+          if(err.status === 0) {
+            this.modal.modalText = 'Нет связи с сервером'
+          }
+
+          if (err.status === 401) {
+            storage.removeStorage('sessionId')
+          }
+          return throwError(() => err)
         }),
         map(data => data.data)).subscribe((user)  => {
           this.isAdminFun(user);
@@ -264,10 +282,6 @@ export class AuthService implements OnInit {
 
     //   this.isAuth$.next(true);
     // }
-  }
-
-  ngOnInit() {
-    console.log('ngOnInit', document.cookie.split('sessionId=')[1])
   }
 
   private isAdminFun(user: TUser): void {

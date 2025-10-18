@@ -24,11 +24,9 @@ export class SwipeDirective {
 
   onSwipe(e: TouchEvent, when: string) {
       this.swipe(e, when);
-      // console.log('onswipe')
   }
 
   swipe(e: TouchEvent, when: string): void {
-    // console.log('swipe')
     const coord: [number, number] = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
       const time = new Date().getTime();
 
