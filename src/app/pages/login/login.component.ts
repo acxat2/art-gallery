@@ -30,21 +30,21 @@ import { ClickOutsideDirective } from '../../directives/click-outside.directive'
 })
 export class LoginComponent {
   public modal = false;
+  private loginPattern = /^[a-zA-Z]+([-_]?[a-zA-Z0-9]+){0,2}$/i;
 
   public checkForm: FormGroup = this.fb.group({
-    name: ['', [
+    login: ['', [
       Validators.required,
-      Validators.pattern(" *[A-ZА-Я][a-zа-я]* *")
+      Validators.pattern(this.loginPattern)
     ]],
 
     password: ['', [
       Validators.required,
-      Validators.pattern('[0-9]{1,2}\.[0-9]{2}\.[0-9]{4}')
     ]]
   })
 
-  get fNameControl() {
-    return this.checkForm.get('name');
+  get fLoginControl() {
+    return this.checkForm.get('login');
   }
 
   get fPasswordControl() {
@@ -52,8 +52,13 @@ export class LoginComponent {
   }
 
   public sendForm() {
-    if (!this.fNameControl?.errors && !this.fPasswordControl?.errors) {
-      this.authService.isAuthIn({name: this.checkForm.get('name')?.value.trim(), birthday: this.checkForm.get('password')?.value.trim()})
+    if (!this.fLoginControl?.errors && !this.fPasswordControl?.errors) {
+      this.authService.isAuthIn(
+        {
+          login: this.checkForm.get('login')?.value.trim().toLowerCase(),
+          password: this.checkForm.get('password')?.value.trim()
+        }
+      )
     } else {
       this.modal = true
     }
@@ -66,6 +71,5 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-  ) {
-  }
+  ) {}
 }

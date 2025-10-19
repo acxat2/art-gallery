@@ -9,6 +9,8 @@ import { NgErrorComponent } from "../../components/ng-error/ng-error.component";
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 import { TelegramService } from '../../services/telegram.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { TUserReg } from '../../types';
 
 @Component({
   selector: 'app-login',
@@ -37,12 +39,27 @@ export class RegistrationComponent {
   public checkForm: FormGroup = this.fb.group({
     name: ['', [
       Validators.required,
-      Validators.pattern(" *[A-ZА-Я][a-zа-я]* *")
+      Validators.pattern('[a-zA-ZА-ЯЁа-яё ]{1,50}')
     ]],
 
     birthday: ['', [
       Validators.required,
       Validators.pattern('[0-9]{4}\-[0-9]{2}\-[0-9]{2}')
+    ]],
+
+    login: ['', [
+      Validators.required,
+      Validators.pattern(/^[a-zA-Z]+([-_]?[a-zA-Z0-9]+){0,2}$/)
+    ]],
+
+    password: ['', [
+      Validators.required,
+      Validators.pattern('[a-zA-Z0-9-\_]{4,16}')
+      // Validators.pattern('(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{4,16}')
+    ]],
+
+    passwordControl: ['', [
+      Validators.required,
     ]],
 
     textarea: ['', [
@@ -59,47 +76,70 @@ export class RegistrationComponent {
     return this.checkForm.get('birthday');
   }
 
+  get fLoginControl() {
+    return this.checkForm.get('login');
+  }
+
+  get fPasswordControl() {
+    return this.checkForm.get('password');
+  }
+
+  get fPasswordRepeatControl() {
+    return this.checkForm.get('passwordControl');
+  }
+
   get fTextareaControl() {
     return this.checkForm.get('textarea');
   }
 
-  public sendForm() {
+  public async sendForm() {
     const now = new Date().getFullYear()
-    if (!this.fNameControl?.errors && !this.fBirthdayControl?.errors && !this.fTextareaControl?.errors) {
-      const year = this.checkForm.get('birthday')?.value.slice(0, 4);
+
+    if (this.checkForm.status != "INVALID") {
+      const name = this.checkForm.get('name')?.value.trim();
+      const birthday = this.checkForm.get('birthday')?.value.trim();
+      const login = this.checkForm.get('login')?.value.trim().toLowerCase();
+      const password = this.checkForm.get('password')?.value.trim();
+      const passwordRepeat = this.checkForm.get('passwordControl')?.value.trim();
+      const comment = this.checkForm.get('textarea')?.value.trim();
+
+      const year = birthday.slice(0, 4);
       if (now - year <= 5) {
         this.text ='Не слишком ли молоды для регистрации?';
         this.modal = true;
-        return
+        return;
       }
 
       if (now - year > 110) {
         this.text ='Столько не живут';
         this.modal = true;
-        return
+        return;
       }
 
-      this.telegram.setData(
-        {
-          name: this.checkForm.get('name')?.value,
-          birthday: this.checkForm.get('birthday')?.value,
-          comment: this.checkForm.get('textarea')?.value
-      })
-      this.btnDisabled = true;
-      this.text ='Спасибо за регистрацию! В ближайшее время мы добавим вас в список пользователей.';
-      this.modal = true;
-      this.error = false;
+      if (password !== passwordRepeat) {
+        this.text ='Повторите пароль ещё раз';
+        this.modal = true;
+        this.checkForm.get('passwordControl')?.setValue('');
+        return;
+      }
 
-      setTimeout(() => {
-        this.router.navigate(['/gallery'])
-      }, 5000)
+      const data: TUserReg = {
+        username: name,
+        birthday,
+        login,
+        password
+      }
 
-      localStorage.setItem('reg', `${Date.now()}`)
+      if (this.checkForm.status === "VALID") {
+        this.authService.signup(data, comment);
+      } else {
+        this.modal = true
+      }
+
     } else {
-      this.text ='Не все поля заполнены';
+      this.text ='Поля не корректно или не все заполнены';
       this.modal = true;
     }
-
   }
 
   public closeModal() {
@@ -107,11 +147,13 @@ export class RegistrationComponent {
   }
 
   constructor(
-    private telegram: TelegramService,
+    // private telegram: TelegramService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
 
   ) {
+
     const reg = localStorage.getItem('reg');
     const time = reg ? (+reg + 3600000) - Date.now() : 0;
     this.btnDisabled = true;

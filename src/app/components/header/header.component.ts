@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
@@ -41,7 +41,7 @@ export class HeaderComponent {
     {linkName: 'Музыка', routerLink: 'music', isLoggedIn: this.userIn$},
     {linkName: 'Литература', routerLink: 'literature', isLoggedIn: this.userIn$},
     // {linkName: 'Игры', routerLink: '#', isLoggedIn: this.default$},
-    // {linkName: 'Birthday', routerLink: 'quest', isLoggedIn: this.authQuest$},
+    {linkName: 'Birthday', routerLink: 'quest', isLoggedIn: this.authQuest$},
     {linkName: 'NewYear', routerLink: 'newyear', isLoggedIn: this.authNewYear$}
     // {linkName: 'Клендарь', routerLink: 'calendar', isLoggedIn: this.default$},
     // {linkName: 'Контакты', routerLink: 'contacts', isLoggedIn: this.default$},
@@ -74,6 +74,7 @@ export class HeaderComponent {
   constructor(
     private authService: AuthService,
   ) {
+
   }
 }
 
