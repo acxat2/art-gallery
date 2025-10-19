@@ -14,20 +14,20 @@ export type Modal = {
   modalText: string
 }
 
-export type AuthState = {
-  modal: {
-    active: boolean,
-    error: boolean,
-    modalText: string
-  },
-  userName: string,
-  guards: {
-    default: boolean,
-    isAuth: boolean,
-    authQuest: boolean,
-    authNewYear: boolean
-  }
-}
+// export type AuthState = {
+//   modal: {
+//     active: boolean,
+//     error: boolean,
+//     modalText: string
+//   },
+//   userName: string,
+//   guards: {
+//     default: boolean,
+//     isAuth: boolean,
+//     authQuest: boolean,
+//     authNewYear: boolean
+//   }
+// }
 
 export const URL = url['PROD'];
 
@@ -53,7 +53,7 @@ export class AuthService {
     modalText: ''
   };
 
-  // private STORAGEKEY = 'art-studio';
+  private STORAGEKEY = 'sessionId';
 
   // private authState: AuthState = {
   //   modal: {
@@ -81,7 +81,7 @@ export class AuthService {
   public authNewYear$ = new BehaviorSubject<boolean>(auth.newYearIn)
 
   public signup(data: TUserReg, comment: string) {
-    const reg$: Observable<any> = this.httpService.postHttp(`${URL}/api/signup`, data);
+    const reg$: Observable<any> = this.httpService.postHttp(`${URL}/api/user/signup`, data);
     try {
       reg$.pipe(catchError((err: any) => {
         this.modal.active = true;
@@ -116,7 +116,7 @@ export class AuthService {
   }
 
   public isAuthIn(authUser: TAuthUser): void {
-    const user$: Observable<{user: TUser}> = this.httpService.postHttp(`${URL}/api/login`, authUser);
+    const user$: Observable<{user: TUser}> = this.httpService.postHttp(`${URL}/api/user/login`, authUser);
 
     try {
       user$.pipe(
@@ -127,13 +127,12 @@ export class AuthService {
           }
           this.modal.active = true;
           this.modal.error = true;
-          console.log('Error:', err)
           return throwError(() => err)
         }),
         tap((res: any) => {
           const sessionId = res.sessionId
           if (sessionId) {
-            this.storage.saveToStorage('sessionId', sessionId)
+            this.storage.saveToStorage(this.STORAGEKEY, sessionId)
           }
         }),
         map(data => data.user))
@@ -145,14 +144,14 @@ export class AuthService {
         this.router.navigate(['']);
         this.isAuth$.next(true);
 
-        this.modalActive(`Добро пожаловать ${user.username}`, false);
 
-        if (user.role === 'admin' || this.todayByControl === intlDateControl.format(new Date('1986-11-01'))) {
+        if (user.role === 'admin' || this.todayByControl === intlDateControl.format(new Date(user.birthday))) {
           auth.isQuestIn = true;
           this.authQuest$.next(auth.isQuestIn);
-          setTimeout(() => this.modalActive(`С Днём Рождения!!!`, false), 5000)
-          setTimeout(() => this.modalActive(`Сегодня вам доступна бонусная страница "Quest"`, false), 10000)
+          setTimeout(() => this.modalActive(`С Днём Рождения ${user.username}!!!`, false))
+          // setTimeout(() => this.modalActive(`Сегодня вам доступна бонусная страница "Quest"`, false), 5000)
         }
+        this.modalActive(`Добро пожаловать ${user.username}`, false);
       })
 
     } catch (err) {
@@ -162,19 +161,18 @@ export class AuthService {
 
   public isAuthOut() {
 
-    const sessionId = this.storage.getFromStorage('sessionId')
+    const sessionId = this.storage.getFromStorage(this.STORAGEKEY)
     try {
-      const logout = this.httpService.getHttp(`${URL}/api/logout`, sessionId)
+      const logout = this.httpService.getHttp(`${URL}/api/user/logout`, sessionId)
       logout.pipe(
         catchError((err) => {
           this.modal.modalText = "Что-то пошло не так";
           this.modal.active = true;
           this.modal.error = true;
-          console.log('Error:', err)
           return throwError(() => err)
         }),
         tap(() => {
-          this.storage.removeStorage('sessionId')
+          this.storage.removeStorage(this.STORAGEKEY)
         })
       )
       .subscribe(() => {
@@ -214,10 +212,10 @@ export class AuthService {
     private storage: StorageService
   ) {
     this.isAdmin = false
-    const sessionId = storage.getFromStorage('sessionId')
+    const sessionId = storage.getFromStorage(this.STORAGEKEY)
     if (sessionId) {
       try {
-        const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL}/api/user`, sessionId)
+        const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL}/api/user/user`, sessionId)
         user$.pipe(catchError((err: any) => {
           this.modal.modalText = 'Попробуйте войти снова';
           this.modal.active = true;
@@ -227,7 +225,7 @@ export class AuthService {
           }
 
           if (err.status === 401) {
-            storage.removeStorage('sessionId')
+            storage.removeStorage(this.STORAGEKEY)
           }
           return throwError(() => err)
         }),
