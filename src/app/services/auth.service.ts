@@ -136,7 +136,7 @@ export class AuthService {
           }
         }),
         map(data => data.user))
-      .subscribe((user)  => {
+      .subscribe((user: TUser)  => {
         this.isAdminFun(user);
         auth.isLoggedIn = true;
         this.userName = user.username;
@@ -145,10 +145,14 @@ export class AuthService {
         this.isAuth$.next(true);
 
 
-        if (user.role === 'admin' || this.todayByControl === intlDateControl.format(new Date(user.birthday))) {
+        if (user.username === 'Светлана Борисовна Багаутдинова' && this.todayByControl === intlDateControl.format(new Date('1986-11-01'))) {
+          setTimeout(() => this.modalActive(`С Днём Рождения Любимая!!!`))
+        } else if (this.todayByControl === intlDateControl.format(new Date(user.birthday))) {
+
+          setTimeout(() => this.modalActive(`С Днём Рождения ${user.username}!!!`))
+        } else if (user.role === 'admin') {
           auth.isQuestIn = true;
           this.authQuest$.next(auth.isQuestIn);
-          setTimeout(() => this.modalActive(`С Днём Рождения ${user.username}!!!`, false))
           // setTimeout(() => this.modalActive(`Сегодня вам доступна бонусная страница "Quest"`, false), 5000)
         }
         this.modalActive(`Добро пожаловать ${user.username}`, false);
