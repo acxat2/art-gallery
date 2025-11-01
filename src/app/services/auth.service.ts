@@ -241,7 +241,7 @@ export class AuthService {
           this.router.navigate(['']);
           this.isAuth$.next(true);
 
-          if (user.role === 'admin' || this.todayByControl === intlDateControl.format(new Date('1986-11-01'))) {
+          if (user.role === 'admin') {
             auth.isQuestIn = true;
             this.authQuest$.next(auth.isQuestIn);
           }
