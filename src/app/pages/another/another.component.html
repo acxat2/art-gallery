@@ -1,0 +1,37 @@
+<div class="container">
+  @if (users$ | async; as users) {
+    @if (newPublic$ | async; as newPublic) {
+      @if (newPublic.length) {
+        <h3>Новые публикации</h3>
+        <div class="cards__container">
+
+          @for (item of newPublic; track item) {
+            <app-another-card [picture]=item link="/another/picture/new"></app-another-card>
+          }
+
+        </div>
+      }
+    }
+    @if (!(load$ | async)) {
+    <div class="body-top">
+      <div class="select-container">
+        <app-select class="select" selectName="Пользователи" (checked)="checkedUser($event)" [selectArrObj]="users" [selectControl]="userId"></app-select>
+      </div>
+        @if (galleryData$ | async; as galleryData) {
+          @if (albums$ | async; as albums) {
+            <div class="select-container">
+              <app-select class="select" selectName="Альбом" (checked)="checkedAlbum($event)" [selectArr]="albums" [selectControl]="albumValue"></app-select>
+            </div>
+          }
+          <div class="cards__container">
+            @for (item of galleryData; track item) {
+              <app-another-card [picture]=item link="/another/picture/user{{item.userId}}/{{albumValue}}"></app-another-card>
+            }
+          </div>
+        }
+      </div>
+      } @else {
+        <app-spinner></app-spinner>
+      }
+  }
+</div>

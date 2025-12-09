@@ -1,18 +1,38 @@
-<div class="picture-container">
-  <h3>{{ picture.name }}</h3>
-  <div appSwipe (next)="next()" (previous)="prev()" class="image-container">
-    <img src="../../../assets/pictures/{{picture.fileName}}" [alt]="picture.name">
-    <div class="btn-group">
-      <button class="btn-nav" (click)="prev()"></button>
-      <button class="btn-nav" (click)="next()"></button>
-    </div>
-  </div>
-  <div class="card__info">
-    <p>Автор: <b><i>{{ picture.author }}</i></b>
-      <span *ngIf="picture.year">; Год: {{ picture.year }}</span>
-      <span *ngIf="picture.event">; Тема: <i>{{ picture.event | translate }}</i></span>
-    </p>
-  </div>
-</div>
+<div class="container">
+  @if (picture) {
+    <div class="picture-container">
+      <div appSwipe (next)="next()" (previous)="prev()" class="image-container">
+        <img src="{{URL}}/images/{{picture.fileName}}" [alt]="picture.title">
+        <div class="btn-group">
+          <button class="btn-nav" (click)="prev()"></button>
+          <button class="btn-nav" (click)="next()"></button>
+        </div>
+      </div>
+      <div class="card__info">
+        <p><b><i>{{ picture.title }}</i></b>
+          <span>;  {{ picture.year | revertDate}} год</span>
+        </p>
+      </div>
+      <div class="description">
+        <p><i><b>Описание:</b></i> {{picture.description}}</p>
+      </div>
+      <div style="text-align: center;">
+        <p><i>Альбом:</i> {{picture.album}}</p>
+        <p>({{picture.mod ? 'Опубликовано' : 'Не опубликовано'}})</p>
+      </div>
+      <div class="buttons-container">
+        <button class="btn" (click)="editPicture()">Редактировать</button>
+        <button class="btn danger" (click)="delPicture()">Удалить</button>
+      </div>
 
-<a class="back" routerLink="/gallery">&lArr; В галерею</a>
+    </div>
+    @if (isEditOpen) {
+      <app-modal-edit (closed)="this.isEditOpen = false" [imageData]="picture"></app-modal-edit>
+    }
+    @if (isDeleteOpen) {
+      <app-modal info={{modalText}} [confirmIn]="confirm" (confirmOut)="confirmDel($event)"></app-modal>
+    }
+  } @else {
+    <app-spinner></app-spinner>
+  }
+</div>

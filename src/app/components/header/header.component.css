@@ -1,11 +1,12 @@
 .header {
-  padding: 20px 10px;
+  padding: 5px;
   margin-bottom: 10px;
   color: var(--color-light);
   background-color: var(--color-black);
 }
 
 .header__container {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -26,13 +27,30 @@
   cursor: pointer;
 }
 
-.nav-menu {
-  display: none;
+.user-menu {
+  position: absolute;
+  top: 50px;
+  right: 5px;
+  display: block;
+  padding-left: 10px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+  z-index: 1;
+  color: var(--color-light);
+  border-radius: 0 0 10px 10px;
+  background-color: black;
+  opacity: 0.6;
+}
+
+.menu__list {
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
   color: chartreuse;
   text-shadow: var(--color-light) 1px 0 10px;
+  cursor: pointer;
 }
 
 .header__logo {
@@ -56,16 +74,16 @@
   line-height: 25px;
 }
 
-.nav__item:not(:last-child) {
-  margin-right: 30px;
-}
-
 .nav__link {
   position: relative;
   outline: none;
   z-index: 1;
   transition: color var(--transition);
   cursor: pointer;
+}
+
+.nav__item:not(:last-child) {
+  margin-right: 20px;
 }
 
 .nav__link:hover {
@@ -96,8 +114,17 @@
 
 .header__right {
   display: flex;
+  column-gap: 10px;
+}
+
+.user {
+  cursor: pointer;
+}
+
+.menu__item {
+  display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: end;
 }
 
 h4 {
@@ -111,17 +138,15 @@ h4 {
 }
 
 @media (max-width: 1365px) {
-  .header {
+  /* .header {
     padding: 5px 5px;
-    /* color: var(--color-light);
-    background-color: var(--color-black); */
-  }
+  } */
 
-  .header__container{
+  /* .header__container{
     position: relative;
     justify-content: space-between;
   }
-
+ */
   .logo {
     object-fit: cover;
   }
@@ -142,41 +167,9 @@ h4 {
   }
 }
 
-@media (max-width: 767px) {
-}
-
 @media (max-width: 660px) {
   .btn-menu {
     display: inline-block;
-  }
-
-  .nav {
-    display: none;
-  }
-
-  .nav-menu {
-    position: absolute;
-    top: 0;
-    display: block;
-    padding-left: 7px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-    z-index: 1;
-    color: var(--color-light);
-    border-radius: 0 0 5px 0;
-    background-color: black;
-    opacity: 0.8;
-  }
-
-  .nav-menu .btn-menu {
-    margin-top: 8.5px;
-    margin-left: 3px;
-    margin-bottom: 15px;
-  }
-
-  .nav__list {
-    flex-direction: column;
-    text-align: left;
   }
 
   .nav__item {

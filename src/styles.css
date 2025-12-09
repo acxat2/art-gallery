@@ -10,6 +10,7 @@ html {
 ::after,
 ::before{
   box-sizing: inherit;
+  margin: 0;
 }
 
 img {
@@ -19,6 +20,93 @@ img {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+h2 {
+  margin: 0.8em 0;
+  padding-left: 10px;
+}
+
+h3 {
+    margin-bottom: 0.1em;
+}
+
+p {
+    margin: 0 0 5px 0;
+    text-indent: 1em;
+    line-height: 1.3em;
+}
+
+ul, ol {
+    margin-bottom: 0.5em;
+    padding-left: 30px;
+}
+
+li {
+    margin: 8px 0;
+}
+
+input {
+  padding: 12px 15px;
+  border: 2px solid #ced4da;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #495057;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+select {
+  padding: 12px 15px;
+  border: 2px solid #ced4da;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #495057;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* Текстовое поле описания */
+textarea {
+  padding: 12px 15px;
+  border: 2px solid #ced4da;
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 100px;
+  font-size: 15px;
+  color: #495057;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+  display: block;
 }
 
 @font-face {
@@ -105,6 +193,10 @@ body {
   transition: transform ease-in-out 0.1s;
 }
 
+.danger {
+  background-color: rgb(255, 77, 77);
+}
+
 .btn:active {
   background-color: rgb(174, 0, 255);
   transform: scale(0.95);
@@ -121,8 +213,33 @@ body {
 
 @media (max-width: 767px) {
   .container {
-    padding-left: 0px;
-    padding-right: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  input {
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    color: #495057;
+  }
+
+  select {
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+
+  /* Текстовое поле описания */
+  textarea {
+    padding: 8px 10px;
+    border: 2px solid #ced4da;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+
+  label {
+    font-weight: 600;
+    margin-bottom: 4px;
   }
 }
 

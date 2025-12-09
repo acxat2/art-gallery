@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { YearSvgComponent } from '../../components/year-svg/year-svg.component';
 import { auth, dateNewYearActive, now } from '../../guards/auth';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [YearSvgComponent, RouterModule],
+  imports: [YearSvgComponent, RouterModule, CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -14,5 +16,8 @@ import { RouterModule } from '@angular/router';
 export class HomeComponent {
   public pre2025 = now >= dateNewYearActive && now < '2025.12.10' ? false : true;
   public newYearActive = auth.newYearIn
-  public logIn = auth.isLoggedIn
+  // public logIn = auth.isLoggedIn
+  public logIn$ = this.authService.isAuth$.asObservable()
+
+  constructor (private authService: AuthService) {}
 }

@@ -1,0 +1,103 @@
+<div class="edit-container">
+  <div class="modal-body">
+    <button
+      class="close-button"
+      (click)="onCloseUpload()"
+      aria-label="Закрыть форму редактирования"
+    >×</button>
+    <form [formGroup]="imageForm" (ngSubmit)="editImage()">
+      <div>
+        <label>Название:</label>
+        <input
+          formControlName="title"
+          placeholder="Имя картины"
+          required
+        >
+      </div>
+
+      <div>
+        <label>Описание:</label>
+        <textarea
+          formControlName="description"
+          placeholder="Введите описание изображения"
+          required
+        ></textarea>
+      </div>
+
+      <div class="input-container-group">
+        <div>
+          <label>Дата создания или год:</label>
+          <input
+            formControlName="year"
+            placeholder="ЧЧ.ММ.ГГГГ"
+            required
+            (input)="onInput($event)"
+          >
+        </div>
+        @if (!imageData.mod && !imageData.sharing) {
+          <div class="input-container-checkbox">
+            <label>Публикация</label>
+            <input
+              type="checkbox"
+              formControlName="sharing"
+            >
+          </div>
+        }
+        @if (imageData.mod) {
+          <div class="input-container-checkbox">
+            <label>Публикация</label>
+            <input
+              type="checkbox"
+              formControlName="mod"
+            >
+          </div>
+        }
+        @if (imageData.sharing) {
+          <div class="input-container-checkbox">
+            В ожидании публикации
+            <input type="checkbox" checked disabled>
+          </div>
+        }
+
+      </div>
+      <div class="select-container">
+        <div>
+          <label>Альбом:</label>
+          <select formControlName="album" required (change)="selectOption($event)">
+            @for (album of albums$ | async; track $index) {
+              <option [value]="album">
+                {{ album }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (newOpen) {
+        <app-modal-new
+          info="Создать альбом"
+          (inputValue)="addAlbum($event)"
+          (outside)="closeNewModal()">
+        </app-modal-new>
+      }
+
+      @if (isDuplicate) {
+        <app-modal
+          info={{modalText}}
+          (outside)="closeNewModal()">
+        </app-modal>
+      }
+
+      <button type="submit" [disabled]="!imageForm.valid">
+        Сохранить
+      </button>
+    </form>
+    @if(isSaved) {
+      <app-modal info="Данные успешно изменены"></app-modal>
+    }
+    @if(spinnerOn) {
+      <app-spinner></app-spinner>
+    }
+  </div>
+</div>
+

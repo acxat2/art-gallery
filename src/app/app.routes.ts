@@ -1,86 +1,102 @@
 import { Routes } from '@angular/router';
-import { questGuard } from './guards/quest.guard';
+import { loggedGuard } from './guards/logged.guard';
+import { newYearGuard } from './guards/new-year.guard';
+import { AnotherPictureComponent } from './pages/another-picture/another-picture.component';
+import { AnotherComponent } from './pages/another/another.component';
 import { GalleryComponent } from './pages/gallery/gallery.component';
 import { HomeComponent } from './pages/home/home.component';
+import { ImageUploadComponent } from './pages/image-upload/image-upload.component';
 import { LoginComponent } from './pages/login/login.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PictureComponent } from './pages/picture/picture.component';
-import { ProjectsComponent } from './pages/projects/projects.component';
-import { QuestComponent } from './pages/quest/quest.component';
-import { MusicComponent } from './pages/music/music.component';
-import { loggedGuard } from './guards/logged.guard';
-import { CalendarComponent } from './pages/calendar/calendar.component';
-import { LiteratureComponent } from './pages/literature/literature.component';
-import { newYearGuard } from './guards/new-year.guard';
-import { NewYearComponent } from './pages/new-year/new-year.component';
 import { RegistrationComponent } from './pages/registration/registration.component';
+import { SharingPictureComponent } from './pages/sharing-picture/sharing-picture.component';
+import { SharingComponent } from './pages/sharing/sharing.component';
+import { AnotherNewPictureComponent } from './pages/another-new-picture/another-new-picture.component';
 
 
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'gallery',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
-    path: 'gallery',
+    path: 'home',
     pathMatch: 'full',
+    component: HomeComponent,
+    data: {
+      title: 'Домашняя страница'
+    }
+  },
+  {
+    path: 'gallery',
     component: GalleryComponent,
     data: {
       title: 'Галерея рисунков'
     }
   },
   {
-    path: 'music',
-    component: MusicComponent,
-    canActivate: [loggedGuard],
+    path: 'another',
+    component: AnotherComponent,
     data: {
-      title: 'Игра на фортепиано'
+      title: 'Творчество пользователей'
     }
   },
   {
-    path: 'newyear',
-    component: NewYearComponent,
-    canActivate: [newYearGuard],
+    path: 'sharing',
+    component: SharingComponent,
     data: {
-      title: 'С Новым 2025 Годом!!!'
+      title: 'Заявки на публикацию'
     }
   },
   {
     path: 'home',
     component: HomeComponent,
   },
-  // {
-  //   path: 'calendar',
-  //   component: CalendarComponent,
-  // },
+
   {
-    path: 'literature',
-    component: LiteratureComponent,
-    canActivate: [loggedGuard],
+    path: 'image-upload',
+    component: ImageUploadComponent,
+    // canActivate: [loggedGuard],
   },
-  {
-    path: 'quest',
-    component: QuestComponent,
-    canActivate: [questGuard]
-  },
+
   {
     path: 'login',
     component: LoginComponent
   },
+
   {
     path: 'registration',
     component: RegistrationComponent
   },
+
   {
     path: 'picture/:id',
     component:PictureComponent
   },
+
+  {
+    path: 'another/picture/:userId/:album/:id',
+    component: AnotherPictureComponent
+  },
+
+  {
+    path: 'another/picture/new/:id',
+    component: AnotherNewPictureComponent
+  },
+
+  {
+    path: 'sharing/picture/:id',
+    component: SharingPictureComponent
+  },
+
   {
     path: '404',
     component: NotFoundComponent
   },
+
   {
     path: '**',
     redirectTo: '404',

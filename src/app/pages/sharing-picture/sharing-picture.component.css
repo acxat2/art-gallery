@@ -1,0 +1,85 @@
+.picture-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 5px;
+  padding-right: 5px;
+  height: 100%;
+  padding-bottom: 25px;
+}
+
+.picture-container p {
+  text-indent: 0;
+}
+
+.image-container {
+  position: relative;
+}
+
+.card__info {
+  margin: 5px 0;
+  border-bottom: 1px solid #888;
+}
+
+.description {
+  margin-bottom: 10px;
+}
+
+.buttons-container {
+  display: flex;
+  column-gap: 30px;
+}
+
+.btn-group {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.btn-nav {
+  width: 50%;
+  height: 100%;
+  border: none;
+  opacity: 0;
+  cursor: pointer;
+  transition: ease-in-out 0.1s opacity;
+}
+
+.btn-nav:active {
+  opacity: 0.3;
+}
+
+.btn:first-child {
+  margin-right: 10px;
+}
+
+.btns-container {
+  display: flex;
+  column-gap: 20px;
+}
+
+.btn-cancel {
+  background-color: chocolate;
+}
+
+@media (max-width: 660px) {
+
+  .back {
+    display: block;
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    padding: 3px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--color-9d5cd0);
+  }
+
+  .back:hover {
+    color: var(--color-7943A4);
+  }
+}

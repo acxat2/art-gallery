@@ -7,6 +7,7 @@ import { TAuthUser, TUser, TUserReg } from '../types';
 import { HttpService } from './http.service';
 import { StorageService } from './storage.service';
 import { TelegramService } from './telegram.service';
+import { keys } from '../../../environment/keys-env';
 
 export type Modal = {
   active: boolean,
@@ -29,7 +30,10 @@ export type Modal = {
 //   }
 // }
 
-export const URL = url['PROD'];
+// export const URL = url['HOST_DEV'];
+// export const URL_API = url['HOST_DEV_API'];
+export const URL = url['HOST_PROD'];
+export const URL_API = url['HOST_PROD_API'];
 
 const intlDateControl = new Intl.DateTimeFormat('ru', {day: '2-digit', month: '2-digit'})
 const intlDate = new Intl.DateTimeFormat('ru')
@@ -40,7 +44,7 @@ const intlDate = new Intl.DateTimeFormat('ru')
 
 
 export class AuthService {
-  public isAdult = false;
+  // public isAdult = false;
   public isAdmin!: boolean;
   private userName = '';
 
@@ -53,7 +57,7 @@ export class AuthService {
     modalText: ''
   };
 
-  private STORAGEKEY = 'sessionId';
+  private SESSION_KEY = keys.sessionId;
 
   // private authState: AuthState = {
   //   modal: {
@@ -81,7 +85,7 @@ export class AuthService {
   public authNewYear$ = new BehaviorSubject<boolean>(auth.newYearIn)
 
   public signup(data: TUserReg, comment: string) {
-    const reg$: Observable<any> = this.httpService.postHttp(`${URL}/api/user/signup`, data);
+    const reg$: Observable<any> = this.httpService.postHttp(`${URL_API}/user/signup`, data);
     try {
       reg$.pipe(catchError((err: any) => {
         this.modal.active = true;
@@ -100,6 +104,7 @@ export class AuthService {
 
         this.telegram.setData(
           {
+            login: data.login,
             name: data.username,
             birthday: data.birthday,
             comment,
@@ -116,9 +121,8 @@ export class AuthService {
   }
 
   public isAuthIn(authUser: TAuthUser): void {
-    const user$: Observable<{user: TUser}> = this.httpService.postHttp(`${URL}/api/user/login`, authUser);
-
     try {
+      const user$: Observable<{user: TUser}> = this.httpService.postHttp(`${URL_API}/user/login`, authUser);
       user$.pipe(
         catchError((err: any) => {
           this.modal.modalText = 'Не привильный логин или пароль';
@@ -132,23 +136,21 @@ export class AuthService {
         tap((res: any) => {
           const sessionId = res.sessionId
           if (sessionId) {
-            this.storage.saveToStorage(this.STORAGEKEY, sessionId)
+            this.storage.saveToStorage(this.SESSION_KEY, sessionId)
           }
         }),
-        map(data => data.user))
-      .subscribe((user: TUser)  => {
+        map(data => data.user)).subscribe((user)  => {
         this.isAdminFun(user);
         auth.isLoggedIn = true;
         this.userName = user.username;
         this.userName$.next(this.userName);
-        this.router.navigate(['']);
         this.isAuth$.next(true);
+        this.router.navigate(['/gallery'])
 
 
         if (user.username === 'Светлана Борисовна Багаутдинова' && this.todayByControl === intlDateControl.format(new Date('1986-11-01'))) {
           setTimeout(() => this.modalActive(`С Днём Рождения Любимая!!!`))
         } else if (this.todayByControl === intlDateControl.format(new Date(user.birthday))) {
-
           setTimeout(() => this.modalActive(`С Днём Рождения ${user.username}!!!`))
         } else if (user.role === 'admin') {
           auth.isQuestIn = true;
@@ -165,9 +167,9 @@ export class AuthService {
 
   public isAuthOut() {
 
-    const sessionId = this.storage.getFromStorage(this.STORAGEKEY)
+    const sessionId = this.storage.getFromStorage(this.SESSION_KEY)
     try {
-      const logout = this.httpService.getHttp(`${URL}/api/user/logout`, sessionId)
+      const logout = this.httpService.getHttp(`${URL_API}/user/logout`, sessionId)
       logout.pipe(
         catchError((err) => {
           this.modal.modalText = "Что-то пошло не так";
@@ -176,7 +178,7 @@ export class AuthService {
           return throwError(() => err)
         }),
         tap(() => {
-          this.storage.removeStorage(this.STORAGEKEY)
+          this.storage.removeStorage(this.SESSION_KEY)
         })
       )
       .subscribe(() => {
@@ -188,7 +190,7 @@ export class AuthService {
         this.authQuest$.next(auth.isQuestIn);
         auth.newYearIn = false;
         this.authNewYear$.next(auth.newYearIn);
-        location.reload();
+        location.replace('/');
       })
     } catch(err) {
       console.error(err)
@@ -216,12 +218,13 @@ export class AuthService {
     private storage: StorageService
   ) {
     this.isAdmin = false
-    const sessionId = storage.getFromStorage(this.STORAGEKEY)
+    const sessionId = storage.getFromStorage(this.SESSION_KEY)
     if (sessionId) {
       try {
-        const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL}/api/user/user`, sessionId)
+        const user$: Observable<{data: TUser}> = this.httpService.getHttp(`${URL_API}/user/user`, sessionId)
         user$.pipe(catchError((err: any) => {
-          this.modal.modalText = 'Попробуйте войти снова';
+          router.navigate(['/login'])
+          this.modal.modalText = 'Сессия завершена. Попробуйте войти снова';
           this.modal.active = true;
           this.modal.error = true;
           if(err.status === 0) {
@@ -229,19 +232,18 @@ export class AuthService {
           }
 
           if (err.status === 401) {
-            storage.removeStorage(this.STORAGEKEY)
+            storage.removeStorage(this.SESSION_KEY)
           }
           return throwError(() => err)
         }),
         map(data => data.data)).subscribe((user)  => {
           this.isAdminFun(user);
+          auth.isAdmin = this.isAdmin;
           auth.isLoggedIn = true;
           this.userName = user.username;
           this.userName$.next(this.userName);
-          this.router.navigate(['']);
           this.isAuth$.next(true);
-
-          if (user.role === 'admin') {
+          if (user.role === 'admin' ) {
             auth.isQuestIn = true;
             this.authQuest$.next(auth.isQuestIn);
           }
@@ -250,40 +252,6 @@ export class AuthService {
         console.error(err)
       }
     }
-
-    // const userStorage = this.storage.getFromStorage(this.STORAGEKEY);
-    // if (userStorage) {
-    //   const user: User = JSON.parse(userStorage);
-    //   if (user.role === 'admin' || user.birthday.slice(0, 5) === this.today) {
-    //     auth.isQuestIn = true;
-    //   } else {
-    //     auth.isQuestIn = false;
-    //   }
-
-    //   if (user.role === 'admin'
-    //      || this.today === '01.01'
-    //      || this.today === '02.01'
-    //      || this.today === '03.01'
-    //      || this.today === '04.01'
-    //      || this.today === '05.01'
-    //      || this.today === '06.01'
-    //      || this.today === '07.01'
-    //      || this.today === '08.01'
-    //      || this.today === '09.01'
-    //      || this.today === '10.01') {
-    //     auth.newYearIn = true;
-    //     this.authNewYear$.next(auth.newYearIn)
-    //   }
-
-    //   this.isAdminFun(user);
-    //   auth.isLoggedIn = true;
-
-    //   this.authQuest$.next(auth.isQuestIn);
-    //   this.userName = user.username;
-    //   this.userName$.next(this.userName);
-
-    //   this.isAuth$.next(true);
-    // }
   }
 
   private isAdminFun(user: TUser): void {
@@ -292,11 +260,4 @@ export class AuthService {
       this.isAdmin$.next(true)
     }
   }
-
-  // private isAdultFun(user: User): void {
-  //   if (getFullYear(user.birthday) >= 18 && user.role !== 'user') {
-  //     this.isAdult = true;
-  //   }
-  // }
-
 }

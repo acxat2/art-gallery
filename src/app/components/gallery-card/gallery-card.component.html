@@ -1,8 +1,15 @@
-<!-- <div class="gallery-card"> -->
+<div class="card-container">
   <img
     class="card__picture"
-    src="../../../assets/pictures/card/{{picture.fileName}}"
-    alt="{{picture.name}}"
-    [routerLink]="['/picture', picture.id]"
-  >
-<!-- </div> -->
+    src="{{URL}}/cards/{{picture.fileName}}"
+    alt="{{picture.title}}"
+    [routerLink]="[link, picture.id]"
+    >
+  <div class="card__title">{{ (picture.title && picture.title.length > 13) ? (picture.title | slice:0:13) + '...' : picture.title}}</div>
+  @if (picture.sharing) {
+    <div class="sharing marker" appTooltip="В ожидании"></div>
+  }
+  @if (picture.mod) {
+    <div class="mod marker" appTooltip="Опубликовано"></div>
+  }
+</div>

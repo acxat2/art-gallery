@@ -1,14 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { ModalComponent } from '../../components/modal/modal.component';
-import { NgErrorComponent } from "../../components/ng-error/ng-error.component";
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
-import { TelegramService } from '../../services/telegram.service';
-import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TUserReg } from '../../types';
 
@@ -18,7 +16,6 @@ import { TUserReg } from '../../types';
   imports: [
     ButtonModule,
     InputMaskModule,
-    NgErrorComponent,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
@@ -91,6 +88,12 @@ export class RegistrationComponent {
   get fTextareaControl() {
     return this.checkForm.get('textarea');
   }
+
+  public onInput(e: Event) {
+    const input = (e.target as HTMLInputElement).value.replace(/[^a-zA-Z0-9-_]/, '');
+    this.checkForm.get('login')?.setValue(input, {emitEvent: false})
+  }
+
 
   public async sendForm() {
     const now = new Date().getFullYear()

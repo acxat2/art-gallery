@@ -1,0 +1,15 @@
+
+<div class="modal-info-container" style="width: calc(100vw - 20px);">
+  <div (appClickOutside)="clickOutside()"
+    class="modal-info"
+    [class.modal-error]="error"
+    [style.marginTop]="top + 'px'"
+    [class.btn-out]="out"
+    >
+    <p class="text">{{info}}</p>
+    <div class="btn-container">
+      <input type="text" class="input-new" #inputRef value="Новый">
+    </div>
+    <button class="btn-confirm no" (click)="setValue(inputRef.value)">Добавить</button>
+  </div>
+</div>

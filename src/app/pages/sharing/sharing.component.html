@@ -1,0 +1,28 @@
+<div class="container">
+  @if (users$ | async; as users) {
+    <div class="body-top">
+      <div class="select-container">
+        <app-select class="select" selectName="Пользователи" (checked)="checkedUser($event)" [selectArrObj]="users" [selectControl]="userId"></app-select>
+      </div>
+    </div>
+    <!-- @if (user$ | async) { -->
+      @if (!(load$ | async)) {
+      @if (galleryData$ | async; as galleryData) {
+        @if (albums$ | async; as albums) {
+          <div class="select-container">
+            <app-select class="select" selectName="Альбом" (checked)="checkedAlbum($event)" [selectArr]="albums" [selectControl]="albumValue"></app-select>
+          </div>
+        }
+        <div class="cards__container">
+          @for (item of galleryData; track item) {
+            <app-another-card [picture]=item link="/sharing/picture"></app-another-card>
+          }
+        </div>
+
+      }
+    } @else {
+      <app-spinner></app-spinner>
+    }
+    <!-- } -->
+  }
+</div>

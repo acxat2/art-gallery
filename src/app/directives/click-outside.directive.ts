@@ -11,7 +11,7 @@ export class ClickOutsideDirective {
 
   @HostListener('document:mousedown', ['$event.target'])
   @HostListener('document:touchstart', ['$event.target'])
-  @HostListener('document:keydown')
+  // @HostListener('document:keydown')
 
   onClick(event: HTMLElement) {
     const clickedInside = this.elementRef.nativeElement.contains(event);

@@ -1,0 +1,33 @@
+ @if (picture) {
+  <div class="picture-container" >
+    <div appSwipe (next)="next()" (previous)="prev()" class="image-container">
+      <img src="{{URL}}/images/{{picture.fileName}}?user='{{picture.userId}}'&album={{picture.album}}" [alt]="picture.description">
+      <div class="btn-group">
+        <button class="btn-nav" (click)="prev()"></button>
+        <button class="btn-nav" (click)="next()"></button>
+      </div>
+    </div>
+    <div class="card__info">
+      <p><b><i>{{ picture.title }}</i></b>
+        <span>;  {{ picture.year }} год</span>
+      </p>
+    </div>
+    <div class="description">
+      <p><i><b>Описание:</b></i> {{picture.description}}</p>
+    </div>
+    <div class="btns-container">
+      <button class="btn btn-cancel" (click)="unPublished()">Отменить</button>
+      <button class="btn btn-confirm" (click)="published()">Опубликовать</button>
+    </div>
+  </div>
+} @else {
+  <app-spinner></app-spinner>
+}
+
+  @if(isSaved) {
+    <app-modal info="Данные успешно изменены"></app-modal>
+  }
+  @if(spinnerOn) {
+    <app-spinner></app-spinner>
+  }
+

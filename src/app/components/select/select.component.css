@@ -4,17 +4,13 @@
 }
 
 .select-label {
-  position: absolute;
-  top: -5px;
-  left: 8px;
-  opacity: 0.5;
-  font-size: small;
+  margin-left: 5px;
 }
 
 .select {
-  padding: 3px 5px;
-  max-width: 115px;
-  border-radius: 5px;
-  border-color: var(--color-7943A4);
-  background-color: #e9d5f9;
+  padding: 5px 10px;
+  max-width: 150px;
+  min-width: 100px;
+  background-color: rgba(231, 255, 238, 0.5);
 }
+

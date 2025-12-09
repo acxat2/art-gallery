@@ -1,8 +1,14 @@
 <div class="select-container">
   <label class="select-label">{{selectName}}</label>
   <select class="select" name="{{selectName}}" [(ngModel)]="selectControl" (change)="checkSelect()">
-    @for (item of selectArr; track item) {
-      <option value="{{item}}">{{item | translate}}</option>
+    @if (!selectArrObj.length) {
+      @for (item of selectArr; track item) {
+        <option value="{{item}}">{{item}}</option>
+      }
+    } @else {
+      @for (item of selectArrObj; track item) {
+        <option value="{{item.id}}">{{item.username}}</option>
+      }
     }
   </select>
 </div>

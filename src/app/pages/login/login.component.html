@@ -1,10 +1,11 @@
 <div class="container">
-  <h3 class="title">Авторизуйтесь, чтоб вам были доступны дополнительные возможности</h3>
+  <h3 class="title">Авторизуйтесь для возможности делиться своими работами и смотреть работы других авторов</h3>
 
   <form class="form" [formGroup]="checkForm" (ngSubmit)="sendForm()">
     <div class="form-group">
       <label for="login" class="form-label">Логин *</label>
       <input
+        (input)="onInput($event)"
         id="login"
         type="text"
         class="form-input"
@@ -12,7 +13,6 @@
         pInputText
         formControlName="login"
       >
-      <!-- <ng-error *ngIf="fLoginControl?.hasError('pattern')" message="Не валидный логин"></ng-error> -->
     </div>
     <div class="form-group">
       <label for="password" class="form-label">Пароль *</label>
@@ -24,7 +24,6 @@
         pInputText
         formControlName="password"
         />
-      <!-- <ng-error *ngIf="fPasswordControl?.hasError('pattern')" message="Не валидный пароль"></ng-error> -->
     </div>
     <button class="btn">Войти</button>
   </form>

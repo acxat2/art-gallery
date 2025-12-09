@@ -2,6 +2,7 @@ export const auth = {
   isQuestIn: false,
   isLoggedIn: false,
   newYearIn: false,
+  isAdmin: false,
 }
 
 

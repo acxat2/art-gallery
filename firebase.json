@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/art-studio/browser",
+    "public": "dist/art-nest-gallery/browser",
     "ignore": [
       "firebase.json",
       "**/.*",

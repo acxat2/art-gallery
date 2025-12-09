@@ -1,25 +1,22 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable, OnChanges, SimpleChanges } from '@angular/core';
-import { Observable, tap } from 'rxjs';
-import { StorageService } from './storage.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
-  private headers = (sessionId: string | null) => {
+  private headers = (sessionId: string | null = null) => {
     if (sessionId) {
       return new HttpHeaders({
-        'Content-type': 'application/json',
-        'Authorization': `Basic ${sessionId}`
+        'Authorization': `Bearer ${sessionId}`,
       })
     }
     else {
       return new HttpHeaders({
         'Content-type': 'application/json',
       })
-
     }
   }
 
@@ -28,18 +25,20 @@ export class HttpService {
     return this.httpClient.get<T>(url, { headers });
   }
 
-  public postHttp<T>(url: string, body: object, sessionId: string | null = null): Observable<T> {
+  public postHttp<T>(url: string, body: any, sessionId: string | null = null, options: Object = {}): Observable<T> {
     const headers = this.headers(sessionId)
-    return this.httpClient.post<T>(url, body, { headers })
+    return this.httpClient.post<T>(url, body, { headers, ...options})
   }
 
   public putHttp<T>(url: string, body: object, sessionId: string | null = null): Observable<T> {
     const headers = this.headers(sessionId)
+    // return this.httpClient.put<T>(url, body, { headers })
     return this.httpClient.put<T>(url, body, { headers })
   }
 
   public deleteHttp<T>(url: string, sessionId: string | null = null): Observable<T> {
     const headers = this.headers(sessionId)
+    // return this.httpClient.delete<T>(url, { headers })
     return this.httpClient.delete<T>(url, { headers })
   }
   constructor(private httpClient: HttpClient) { }

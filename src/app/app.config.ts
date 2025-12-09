@@ -1,14 +1,9 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
-import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideStore } from '@ngrx/store';
-import * as fromUser from './store/reducers/user.reducers'
-import { HttpService } from './services/http.service';
-import { AuthService } from './services/auth.service';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './interceptors/auth.interceptor';
+import { routes } from './app.routes';
 
 
 export const appConfig: ApplicationConfig = {
@@ -16,9 +11,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideStore(),
-    provideHttpClient(
-      withInterceptors([authInterceptor])
-    ),
+    provideHttpClient(),
   ]
 };
 // StoreModule.forRoot({user: fromUser.reducer})

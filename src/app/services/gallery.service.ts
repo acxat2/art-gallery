@@ -1,173 +1,138 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-import { gallery, IPicture } from '../../base/gallery';
-import { AuthService } from './auth.service';
+import { BehaviorSubject, catchError, throwError } from 'rxjs';
+import { keys } from '../../../environment/keys-env';
+import { AuthService, URL_API } from './auth.service';
+import { HttpService } from './http.service';
+import { StorageService } from './storage.service';
+
+export type TPicture = {
+  id: string;
+  userId: string,
+  title: string,
+  fileName: string;
+  description: string;
+  album: string;
+  year: string;
+  mod: boolean;
+  sharing: boolean;
+  createdDate: string
+}
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class GalleryService {
-  private eventFilter = false;
-  private toWhomFilter = false;
-  private authorFilter = false;
-
-  public eventValue = '';
-  public toWhomValue = '';
-  public authorValue = '';
-
-  private gallerySource : IPicture[] = [];
-
+  private gallerySource: TPicture[] | null = null;
   private galleryState = this.gallerySource;
+  private albumFilter = false;
 
-  public galleryState$ = new BehaviorSubject<IPicture[]>(this.galleryState)
+  public galleryState$ = new BehaviorSubject<TPicture[] | null>(this.galleryState);
+  public albumValue = 'Все';
+  public albumValue$ = new BehaviorSubject<string | undefined>(this.albumValue);
+  public albums$ = new BehaviorSubject<string[]>([this.albumValue]);
 
-  public getById(id: number): IPicture {
-    return this.galleryState.find(p => p.id === id) as IPicture
+  public getById(id: string): TPicture | null {
+    return this.galleryState ? this.galleryState.find(p => p.id === id) as TPicture : null
   }
 
-  private sortGallery(): void {
-    function sortG(g: IPicture[]) {
+  public sortGallery(): void {
+    function sortG(g: TPicture[]) {
       return g.sort((a, b) => {
-      if (a.year && b.year) {
-        if (a.year > b.year) return 1;
-        if (a.year == b.year) return 0;
-        if (a.year < b.year) return -1;
-      }
-      return -1;
-    })
+        if (a.year && b.year) {
+          if (a.year > b.year) return -1;
+          if (a.year == b.year) {
+            if (a.createdDate < b.createdDate) return 1;
+            if (a.createdDate > b.createdDate) return -1;
+          };
+          if (a.year < b.year) return 1;
+        }
+        return -1;
+      })
     }
-    const galleryInit = this.authService.isAdmin$.subscribe(admin => {
-      const state = sortG(gallery.filter(p => admin ? p : p.admin ? null : p))
-      this.gallerySource = this.galleryState = state;
-      this.galleryState$.next(this.gallerySource)
+
+    const sessionId = this.storageService.getFromStorage(keys.sessionId)
+
+    const galleryInit = this.httpService.getHttp(`${URL_API}/image`, sessionId)
+    .pipe(catchError(err => {
+      return throwError(() => {
+        console.error('Ошибка загрузки данных:', err);
+        return err;
+      })
+    }))
+    .subscribe((res: any) => {
+      const albums = ["Все", ...new Set(res.data.map((i: TPicture) => i.album))] as string[];
+      this.albums$.next(albums)
+      this.gallerySource = this.galleryState = sortG(res.data);
+
+      this.groupFilter()
     })
 
     setTimeout(() => {
       galleryInit.unsubscribe()
-    }, 5000)
+    }, 30000)
   }
 
-  // public setGallery(): void {
-  //   this.sortGallery();
-  //   this.galleryState$.next(this.galleryState);
-  // }
+  public getGalleryDefault() {
+    this.albumValue = "Все"
+    this.galleryState = this.gallerySource;
+    this.galleryState$.next(this.galleryState);
+  }
 
-  public next(id: number): IPicture {
+  public next(id: string): TPicture | void {
+    if (!this.galleryState) {
+      return
+    }
     const index = this.galleryState.findIndex(p => p.id === id);
     return index < this.galleryState.length - 1 ? this.galleryState[index + 1] : this.galleryState[0]
   }
 
-  public prev(id: number): IPicture {
+  public prev(id: string): TPicture | void {
+    if (!this.galleryState) {
+      return
+    }
     const index = this.galleryState.findIndex(p => p.id === id);
     return index > 0 ? this.galleryState[index - 1] : this.galleryState[this.galleryState.length - 1]
   }
 
-
-  public filterEvents(value: string) {
-    if (value === 'Все') {
-      this.eventFilter = false;
-      this.eventValue = ''
+  public filterAlbums(value: string) {
+    if (value === 'Все' || value === '') {
+      this.albumFilter = false;
+      this.albumValue = 'Все'
     } else {
-      this.eventFilter = true;
-      this.eventValue = value
+      this.albumFilter = true;
+      this.albumValue = value
     }
-    this.groupFilter()
-  }
-
-  public filterToWhom(value: string) {
-    if (value === 'Все') {
-      this.toWhomFilter = false;
-      this.toWhomValue = ''
-    } else {
-      this.toWhomFilter = true;
-      this.toWhomValue = value
-    }
-    this.groupFilter()
-  }
-
-  public filterAuthor(value: string) {
-    if (value === 'Все') {
-      this.authorFilter = false;
-      this.authorValue = ''
-    } else {
-      this.authorFilter = true;
-      this.authorValue = value
-    }
+    this.router.navigate([], {queryParams: {album: this.albumValue}})
     this.groupFilter()
   }
 
   private groupFilter(): void {
-    if (!this.eventFilter && !this.toWhomFilter && !this.authorFilter) {
-      this.galleryState = this.gallerySource;
+    if (!this.gallerySource) {
+      return
+    }
+
+    if (this.albumFilter) {
+      this.galleryState = this.gallerySource.filter(p => p.album === this.albumValue)
       this.galleryState$.next(this.galleryState);
 
-      this.router.navigate([], {queryParams: {}})
       return;
     }
-
-    if (!this.eventFilter && !this.authorFilter && this.toWhomFilter) {
-      if (this.toWhomValue === 'another') {
-        this.galleryState = this.gallerySource.filter(p => p.toWhom ? null : p)
-        this.galleryState$.next(this.galleryState);
-      } else {
-        this.galleryState = this.gallerySource.filter(p => p.toWhom === this.toWhomValue)
-        this.galleryState$.next(this.galleryState);
-      }
-
-      this.router.navigate([], {queryParams: {toWhom: this.toWhomValue}})
-      return;
-    }
-
-    if (this.eventFilter && !this.toWhomFilter && !this.authorFilter) {
-      this.galleryState = this.gallerySource.filter(p => p.event === this.eventValue)
-      this.galleryState$.next(this.galleryState);
-
-      this.router.navigate([], {queryParams: {event: this.eventValue}})
-      return;
-    }
-
-    if (!this.eventFilter && !this.toWhomFilter && this.authorFilter) {
-      this.galleryState = this.gallerySource.filter(p => p.author === this.authorValue)
-      this.galleryState$.next(this.galleryState);
-
-      this.router.navigate([], {queryParams: {author: this.authorValue}})
-      return;
-    }
-
-    if (!this.eventFilter && this.toWhomFilter && this.authorFilter) {
-      this.galleryState = this.gallerySource.filter(p => p.author === this.authorValue && p.toWhom === this.toWhomValue)
-      this.galleryState$.next(this.galleryState);
-
-      this.router.navigate([], {queryParams: {toWhom: this.toWhomValue, author: this.authorValue}})
-      return;
-    }
-    if (this.eventFilter && !this.toWhomFilter && this.authorFilter) {
-      this.galleryState = this.gallerySource.filter(p => p.event === this.eventValue && p.author === this.authorValue)
-      this.galleryState$.next(this.galleryState);
-
-      this.router.navigate([], {queryParams: {event: this.eventValue, author: this.authorValue}})
-      return;
-    }
-    if (this.eventFilter && this.toWhomFilter && !this.authorFilter) {
-      this.galleryState = this.gallerySource.filter(p => p.event === this.eventValue && p.toWhom === this.toWhomValue)
-      this.galleryState$.next(this.galleryState);
-
-      this.router.navigate([], {queryParams: {event: this.eventValue, toWhom: this.toWhomValue}})
-      return;
-    }
-
-    this.galleryState = this.gallerySource.filter(p => p.event === this.eventValue && p.toWhom === this.toWhomValue && p.author === this.authorValue)
-    this.galleryState$.next(this.galleryState);
-
-    this.router.navigate([], {queryParams: {event: this.eventValue, author: this.authorValue, toWhom: this.toWhomValue}})
+    this.getGalleryDefault()
   }
 
   constructor(
-    private authService: AuthService,
+    private httpService: HttpService,
+    private storageService: StorageService,
     private router: Router
   ) {
+
+    if (!storageService.getFromStorage(keys.sessionId)) {
+      this.gallerySource = this.galleryState = [];
+      this.galleryState$.next(this.gallerySource)
+      this.router.navigate(['home'])
+    }
     this.sortGallery()
     }
 }

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, SlicePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -9,7 +9,7 @@ import { ModalComponent } from "../modal/modal.component";
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterModule, CommonModule, ModalComponent, ClickOutsideDirective],
+  imports: [RouterModule, CommonModule, ModalComponent, ClickOutsideDirective, SlicePipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
@@ -18,6 +18,7 @@ export class HeaderComponent {
   private authQuest$: Observable<boolean> = this.authService.authQuest$
   private authNewYear$: Observable<boolean> = this.authService.authNewYear$
   public userIn$: Observable<boolean> = this.authService.isAuth$;
+  public isAdmin$: Observable<boolean> = this.authService.isAdmin$;
   public name$: Observable<string> = this.authService.userName$;
   public modal$: BehaviorSubject<Modal> = this.authService.modal$;
   public navIsOpen = false;
@@ -37,12 +38,14 @@ export class HeaderComponent {
 
   public navMenu = [
     // {linkName: 'Творчество', routerLink: '#', isLoggedIn: this.default$},
-    {linkName: 'Галерея', routerLink: 'gallery', isLoggedIn: this.default$},
-    {linkName: 'Музыка', routerLink: 'music', isLoggedIn: this.userIn$},
-    {linkName: 'Литература', routerLink: 'literature', isLoggedIn: this.userIn$},
-    // {linkName: 'Игры', routerLink: '#', isLoggedIn: this.default$},
-    {linkName: 'Birthday', routerLink: 'quest', isLoggedIn: this.authQuest$},
-    {linkName: 'NewYear', routerLink: 'newyear', isLoggedIn: this.authNewYear$}
+    {linkName: 'Моё', routerLink: 'gallery', isLoggedIn: this.userIn$},
+    {linkName: 'Галерея', routerLink: 'another', isLoggedIn: this.userIn$},
+    {linkName: 'Заявки', routerLink: 'sharing', isLoggedIn: this.isAdmin$},
+    // {linkName: 'Музыка', routerLink: 'music', isLoggedIn: this.userIn$},
+    // {linkName: 'Литература', routerLink: 'literature', isLoggedIn: this.userIn$},
+    // {linkName: 'image', routerLink: 'image-upload', isLoggedIn: this.userIn$},
+    // {linkName: 'Birthday', routerLink: 'quest', isLoggedIn: this.authQuest$},
+    // {linkName: 'NewYear', routerLink: 'newyear', isLoggedIn: this.authNewYear$}
     // {linkName: 'Клендарь', routerLink: 'calendar', isLoggedIn: this.default$},
     // {linkName: 'Контакты', routerLink: 'contacts', isLoggedIn: this.default$},
   ]
@@ -51,12 +54,8 @@ export class HeaderComponent {
     location.replace('/login')
   }
 
-  public outAuth() {
-    // this.modal$.next(({active: true, error: false, modalText: 'Вы уверены?'}))
-    // if (confirm('Вы уверены?')) {
-    //   this.authService.isAuthOut()
-    // }
-    this.confirm = true;
+  public signup() {
+    location.replace('/registration')
   }
 
   public closeModal() {
@@ -77,11 +76,3 @@ export class HeaderComponent {
 
   }
 }
-
-// private telegram: TelegramService
-
-// this.telegram.setData({
-//   name: 'Асхст',
-//   birthday: '12.12.2012',
-//   comment: 'Hello world!'
-// })

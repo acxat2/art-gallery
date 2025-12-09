@@ -1,16 +1,28 @@
 <div class="container">
-  <div class="select-container">
+  @if (galleryData$ | async; as galleryData) {
+    @if (!galleryData.length) {
 
-    <app-select class="select" selectName="Событие" (checked)="checkedEvent($event)" [selectArr]="events" [selectControl]="eventValue"></app-select>
-    <app-select class="select" selectName="Кому" (checked)="checkedToWhom($event)" [selectArr]="toWhom" [selectControl]="toWhomValue"></app-select>
-    <app-select class="select" selectName="Автор" (checked)="checkedAuthor($event)" [selectArr]="author" [selectControl]="authorValue"></app-select>
-
-  </div>
-  <div class="cards__container" *ngIf="galleryData$ | async as galleryData">
-    @for (item of galleryData; track item) {
-    <app-gallery-card [picture]=item></app-gallery-card>
+      <p>У вас ещё нет загруженных изображений. Нажмите <a routerLinkActive="active" routerLink="/image-upload" ><b><i>загрузить</i></b></a> для добавления своего шедевра в галлерею</p>
+    } @else {
+      @if (albums$ | async; as albums) {
+        <div class="body-top">
+          <div class="select-container">
+            <app-select class="select" selectName="Альбом" (checked)="checkedAlbum($event)" [selectArr]="albums" [selectControl]="albumValue"></app-select>
+          </div>
+          <!-- <a routerLinkActive="active" routerLink="/image-upload" class="btn">Загрузить</a> -->
+          <button (click)="openUpload()" class="btn">Загрузить</button>
+        </div>
+      }
+      <div class="cards__container">
+        @for (item of galleryData; track item) {
+          <app-gallery-card [picture]=item link="/picture"></app-gallery-card>
+        }
+      </div>
     }
-  </div>
+    @if (isUpload) {
+      <app-image-upload (closed)="closeUpload()"></app-image-upload>
+    }
+  } @else {
+    <app-spinner></app-spinner>
+  }
 </div>
-
-<!-- <p>gallery work</p> -->

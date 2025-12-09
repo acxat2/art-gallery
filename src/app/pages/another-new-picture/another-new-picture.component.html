@@ -1,0 +1,26 @@
+ @if (picture) {
+   <div class="picture-container" >
+     <div appSwipe (next)="next()" (previous)="prev()" class="image-container">
+       <img src="{{URL}}/images/{{picture.fileName}}" [alt]="picture.title">
+       <div class="btn-group">
+         <button class="btn-nav" (click)="prev()"></button>
+         <button class="btn-nav" (click)="next()"></button>
+       </div>
+     </div>
+      <div class="card__info">
+        <p><b><i>{{ picture.title }}</i></b>
+          <span>;  {{ picture.year | revertDate}} год</span>
+        </p>
+        <!--  -->
+      </div>
+      <div class="description">
+        <p><i><b>Описание:</b></i> {{picture.description}}</p>
+      </div>
+      <div>
+        <p><i>Альбом:</i> {{picture.album}}</p>
+
+      </div>
+   </div>
+} @else {
+  <app-spinner></app-spinner>
+}

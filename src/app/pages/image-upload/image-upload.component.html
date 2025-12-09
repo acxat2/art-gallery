@@ -1,0 +1,93 @@
+<div class="load-image-container">
+  <div class="modal-body">
+    <button
+      class="close-button"
+      (click)="onCloseUpload()"
+      aria-label="Закрыть форму загрузки"
+    >×</button>
+    <form [formGroup]="imageForm" (ngSubmit)="uploadImage()">
+      <div>
+        <input
+          type="file"
+          id="file-input"
+          accept="image/*"
+          required
+          (change)="onFileSelected($event)"
+        >
+      </div>
+
+      @if (selectedFileName) {
+        <div class="file-name-display">
+          Выбрано: {{ selectedFileName }}
+        </div>
+      }
+
+      <div>
+        <label>Название:</label>
+        <input
+          formControlName="title"
+          placeholder="Имя картины"
+          required
+        >
+      </div>
+
+      <div>
+        <label>Описание:</label>
+        <textarea
+          formControlName="description"
+          placeholder="Введите описание картины"
+          required
+        ></textarea>
+      </div>
+
+      <div>
+        <label>Дата создания или год:</label>
+        <input
+          appTooltip="Можно пропустить дату или дату и месяц пробелами."
+          formControlName="year"
+          placeholder="ЧЧ.ММ.ГГГГ"
+          required
+          (input)="onInput($event)"
+        >
+      </div>
+
+      <div class="select-container">
+        <div>
+          <label>Альбом:</label>
+          <select formControlName="album" required (change)="selectOption($event)">
+            @for (album of albums$ | async; track $index) {
+              <option [value]="album">
+                {{ album }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (newOpen) {
+        <app-modal-new
+          info="Создать альбом"
+          (inputValue)="addAlbum($event)"
+          (outside)="closeNewModal()">
+        </app-modal-new>
+      }
+
+      @if (isDuplicate) {
+        <app-modal
+          info={{modalText}}
+          (outside)="closeNewModal()">
+        </app-modal>
+      }
+      <button type="submit" [disabled]="!(imageForm.valid && !waiting)">
+        Загрузить изображение
+      </button>
+    </form>
+
+    @if (uploadedCardUrl) {
+      <div>
+        <h3>Загруженное изображение:</h3>
+        <img [src]="uploadedCardUrl" alt="Загруженное изображение карточки" style="max-width: 100%;">
+      </div>
+    }
+  </div>
+</div>

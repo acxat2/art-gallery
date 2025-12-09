@@ -1,15 +1,14 @@
 <header class="header">
   <div class="header__container container">
-    <div class="btn-menu" (click)="toggleMenu()">Меню</div>
     <div class="header__left">
       <div class="logo__container pi pi-check">
-        <div
-          class="logo header__logo"
-          routerLink="home"
-        >Art-Family</div>
       </div>
       <nav class="nav">
         <ul class="list-reset flex nav__list">
+          <li
+            class="logo nav__item"
+            routerLink="home"
+          >ArtNest</li>
           @for (item of navMenu; track item) {
             @if (item.isLoggedIn | async) {
               <li class="nav__item">
@@ -23,34 +22,46 @@
       </nav>
     </div>
     <div class="header__right">
-      <button *ngIf="!(userIn$ | async); else out" (click)="enter()" class="header__input-btn" aria-label="Вход в аккаунт">
-        Авторизация
-      </button>
-      <div *ngIf="name$ | async as name">{{name}}</div>
+      @if (name$ | async; as name) {
+        <div class="header__user">
+          <div class="user" (click)="this.navIsOpen = !this.navIsOpen;">{{ (name && name.length > 8) ? (name | slice:0:8) + '...' : name }}</div>
+        </div>
+        @if (navIsOpen) {
+          <div class="user-menu">
+            <ul class="list-reset flex menu__list">
+              <!-- <li class="menu__item">
+                <button (click)="navIsOpen = false" class="header__input-btn nav__link" aria-label="Выход из аккаунта">
+                  Редактировать
+                </button>
+              </li> -->
+              <li class="menu__item">
+                <button (click)="this.confirm = true; navIsOpen = false" class="header__input-btn nav__link" aria-label="Выход из аккаунта">
+                  Выход
+                </button>
+              </li>
+            </ul>
+          </div>
+        }
+      }
+
+      @if (!(userIn$ | async)) {
+        <button (click)="signup()" class="header__input-btn" aria-label="Вход в аккаунт">
+          Регистрация
+        </button>
+        <button (click)="enter()" class="header__input-btn" aria-label="Вход в аккаунт">
+          Войти
+        </button>
+      <!-- } @else { -->
+      }
     </div>
   </div>
-  <ng-template #out>
-    <button (click)="outAuth()" class="header__input-btn" aria-label="Выход из аккаунта">
-      Выход
-    </button>
-  </ng-template>
-  <div class="modal-container" *ngIf="modal$ | async as modal">
-    <app-modal (outside)="closeModal()" *ngIf="modal.active" [info]="modal.modalText" [error]="modal.error"></app-modal>
-  </div>
+  @if (modal$ | async; as modal) {
+    <div class="modal-container">
+      <app-modal (outside)="closeModal()" *ngIf="modal.active" [info]="modal.modalText" [error]="modal.error"></app-modal>
+    </div>
+  }
 </header>
-<nav class="nav-menu" *ngIf="navIsOpen" (appClickOutside)="closeMenu()">
-  <div class="btn-menu" (click)="closeMenu()">Меню</div>
 
-  <ul class="list-reset flex nav__list">
-    @for (item of navMenu; track item) {
-      @if (item.isLoggedIn | async) {
-        <li class="nav__item">
-          <a class="nav__link" routerLinkActive="active"
-            routerLink={{item.routerLink}}
-          >{{item.linkName}}</a>
-        </li>
-      }
-    }
-  </ul>
-</nav>
-<app-modal (outside)="closeModal()" *ngIf="confirm" info="Вы уверены?" [confirmIn]="confirm" (confirmOut)="confirmOut($event)"></app-modal>
+@if (confirm) {
+  <app-modal (outside)="closeModal()" info="Вы уверены?" [confirmIn]="confirm" (confirmOut)="confirmOut($event)"></app-modal>
+}
