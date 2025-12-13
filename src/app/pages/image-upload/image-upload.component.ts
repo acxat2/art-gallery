@@ -14,6 +14,8 @@ import { StorageService } from '../../services/storage.service';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 import { checkDateFromMonth, clineReverseDate } from '../../helpers/date-format';
 
+import { NgxImageCompressService } from 'ngx-image-compress';
+
 @Component({
   selector: 'app-image-upload',
   standalone: true,
@@ -38,6 +40,9 @@ export class ImageUploadComponent {
   private STORAGE_KEY = keys.sessionId;
   private newAlbum = 'Создать новый';
   private albumsSubject$ = this.galleryService.albums$
+
+  public imgResultBeforeCompression = '';
+  public imgResultAfterCompression = '';
 
   public newOpen = false;
   public isDuplicate = false;
@@ -108,25 +113,36 @@ export class ImageUploadComponent {
 
   public onFileSelected(event: Event): void {
     const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-
-      this.selectedFile = target.files[0];
-
-      this.imageForm.patchValue({image: this.selectedFile});
-      this.imageForm.patchValue(!this.imageForm.value.title ? {title: this.selectedFile.name.replace(/\.[^.]+$/, '')} : {title: this.imageForm.value.title})
-      this.imageForm.patchValue(!this.imageForm.value.description ? {description: this.selectedFile.name.replace(/\.[^.]+$/, '')} : {description: this.imageForm.value.description})
-      this.imageForm.patchValue(this.imageForm.value.year ? {year: this.imageForm.value.year} : {year: '  .  .' + new Date(Date.now()).getFullYear()})
-      if (this.selectedFile.size > 1024*3000) {
-        this.imageForm.patchValue({title: '', description: ''})
-        this.modalText = 'Размер файла не должен превышать 3 Mb.';
-        this.openCloseModal()
-      }
-    } else {
-      this.selectedFileName = null;
+    if (!target.files || target.files.length === 0) {
+      return;
     }
+
+    this.selectedFile = target.files[0];
+
+    const reader = new FileReader();
+    reader.readAsDataURL(this.selectedFile);
+    reader.onload = () => {
+      const imageUrl = reader.result as string;
+
+      this.imageCompress.compressFile(imageUrl, -1, 80, 60)
+      .then((compressedImage) => {
+        this.imgResultAfterCompression = compressedImage;
+        this.imageForm.patchValue({image: this.imgResultAfterCompression});
+      })
+      .catch((err) => {
+        console.error('Ошибка сжатия', err)
+      })
+
+    }
+
+    const title = !this.imageForm.value.title ? this.selectedFile.name.replace(/\.[^.]+$/, '') : this.imageForm.value.title;
+    const description = !this.imageForm.value.description ? this.selectedFile.name.replace(/\.[^.]+$/, '') : this.imageForm.value.description;
+
+    this.imageForm.patchValue({title, description},
+    )
   }
 
-  public uploadImage(): void {
+  public async uploadImage(): Promise<void> {
     if (!this.imageForm.valid || !this.selectedFile) return;
 
     const sessionId = this.storageService.getFromStorage(this.STORAGE_KEY)
@@ -135,27 +151,35 @@ export class ImageUploadComponent {
       return;
     }
 
-    if (this.selectedFile.size > 1024*3000) {
-      this.modalText = 'Размер файла не должен превышать 3 Mb.';
-      this.imageForm.patchValue({image: ''});
-      this.openCloseModal()
-      return
-    }
-
     this.waiting = true;
 
     const formData = new FormData();
-    formData.append('image', this.selectedFile);
+
+    if (this.selectedFile.size > 1024*1500) {
+      await fetch(this.imgResultAfterCompression)
+      .then(res => res.blob())
+      .then(blob => {
+        if (!this.selectedFile) {
+          return
+        }
+        const file = new File([blob], this.selectedFile.name, { type: this.selectedFile.type });
+        formData.append('image', file);
+      })
+      .catch(err => console.error("Ошибка предобразования в Blob:", err));
+    } else {
+      formData.append('image', this.selectedFile);
+    }
+
     formData.append('title', this.imageForm.value.title);
     formData.append('description', this.imageForm.value.description);
     formData.append('year', clineReverseDate(this.imageForm.value.year));
     formData.append('album', this.imageForm.value.album);
     formData.append('filename', this.selectedFile.name)
 
-    const response = this.httpService.postHttp(`${URL_API}/image/upload`, formData, sessionId)
+    const upload = this.httpService.postHttp(`${URL_API}/image/upload`, formData, sessionId)
     .pipe(catchError(err => {
       return throwError(() => {
-        console.error('Ошибка при загрузке:', err);
+        this.waiting = false;
         alert('Произошла ошибка при загрузке изображения');
         return err
       })
@@ -174,7 +198,7 @@ export class ImageUploadComponent {
         this.imageForm.patchValue({description: '', year: '', title: ''})
         this.uploadedCardUrl = `${URL}/cards/${res.filename}`;
       }
-      response.unsubscribe()
+      upload.unsubscribe()
     })
   }
 
@@ -182,7 +206,8 @@ export class ImageUploadComponent {
     private fb: FormBuilder,
     private httpService: HttpService,
     private storageService: StorageService,
-    private galleryService: GalleryService
+    private galleryService: GalleryService,
+    private imageCompress: NgxImageCompressService
   ) {
     this.imageForm = this.fb.group({
       image: ['', [Validators.required]],

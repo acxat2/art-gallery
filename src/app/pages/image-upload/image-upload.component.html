@@ -23,8 +23,13 @@
       }
 
       <div>
-        <label>Название:</label>
+        <img [src]="imgResultAfterCompression" *ngIf="imgResultAfterCompression" style="max-width: 70%;"/>
+      </div>
+
+      <div>
+        <label for="title">Название:</label>
         <input
+          id="title"
           formControlName="title"
           placeholder="Имя картины"
           required
@@ -32,8 +37,9 @@
       </div>
 
       <div>
-        <label>Описание:</label>
+        <label for="description">Описание:</label>
         <textarea
+          id="description"
           formControlName="description"
           placeholder="Введите описание картины"
           required
@@ -41,8 +47,9 @@
       </div>
 
       <div>
-        <label>Дата создания или год:</label>
+        <label for="year">Дата создания или год:</label>
         <input
+          id="year"
           appTooltip="Можно пропустить дату или дату и месяц пробелами."
           formControlName="year"
           placeholder="ЧЧ.ММ.ГГГГ"
@@ -53,8 +60,8 @@
 
       <div class="select-container">
         <div>
-          <label>Альбом:</label>
-          <select formControlName="album" required (change)="selectOption($event)">
+          <label for="album">Альбом:</label>
+          <select id="album" formControlName="album" required (change)="selectOption($event)">
             @for (album of albums$ | async; track $index) {
               <option [value]="album">
                 {{ album }}
@@ -86,7 +93,7 @@
     @if (uploadedCardUrl) {
       <div>
         <h3>Загруженное изображение:</h3>
-        <img [src]="uploadedCardUrl" alt="Загруженное изображение карточки" style="max-width: 100%;">
+        <img [src]="uploadedCardUrl" alt="Загруженное изображение карточки" style="max-width: 70%;">
       </div>
     }
   </div>
