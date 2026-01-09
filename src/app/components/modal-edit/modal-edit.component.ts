@@ -84,28 +84,29 @@ export class ModalEditComponent implements OnInit {
     this.newOpen = false;
   }
 
-  public openCloseModal() {
+  public openCloseModal(time = 2000) {
+    this.isDuplicate = false;
     this.isDuplicate = true;
-    setTimeout(() => this.isDuplicate = false, 2000)
+    setTimeout(() => this.isDuplicate = false, time)
   }
 
-    public onInput(e: Event) {
-      const input = (e.target as HTMLInputElement).value.replace(/[^\d ]/g, '');
-      let formatted = input;
+  public onInput(e: Event) {
+    const input = (e.target as HTMLInputElement).value.replace(/[^\d ]/g, '');
+    let formatted = input;
 
-      if (input.length > 2) {
-        formatted = input.slice(0, 2) + '.'  + (input.slice(2, 4) <= '12'  ? input.slice(2, 4) :
-        ('12'))
-        if (input.length === 4) {
-          formatted = checkDateFromMonth(formatted)
-        }
-      };
-      if (input.length > 4) formatted = formatted.slice(0, 5)
-        + '.'
-      + (+input.slice(4, 8) <= new Date(Date.now()).getFullYear() && !input.slice(4).includes(' ') && !input.slice(4, 5).includes(`0`) ? input.slice(4, 8) : new Date(Date.now()).getFullYear());
+    if (input.length > 2) {
+      formatted = input.slice(0, 2) + '.'  + (input.slice(2, 4) <= '12'  ? input.slice(2, 4) :
+      ('12'))
+      if (input.length === 4) {
+        formatted = checkDateFromMonth(formatted)
+      }
+    };
+    if (input.length > 4) formatted = formatted.slice(0, 5)
+      + '.'
+    + (+input.slice(4, 8) <= new Date(Date.now()).getFullYear() && !input.slice(4).includes(' ') && !input.slice(4, 5).includes(`0`) ? input.slice(4, 8) : new Date(Date.now()).getFullYear());
 
-      this.imageForm.get('year')?.setValue(formatted, {emitEvent: false})
-    }
+    this.imageForm.get('year')?.setValue(formatted, {emitEvent: false})
+  }
 
   ngOnInit(): void {
     this.imageForm.patchValue({title: this.imageData.title || ''})
@@ -146,6 +147,9 @@ export class ModalEditComponent implements OnInit {
     formData.append('id', this.imageData.id)
 
     if (this.imageForm.value.sharing !== this.imageData.sharing) {
+      this.modalText = `Картина отправлена на модерацию`;
+      this.openCloseModal()
+
       this.telegramService.publicImage(`Заявка на публикацию`);
     }
 
