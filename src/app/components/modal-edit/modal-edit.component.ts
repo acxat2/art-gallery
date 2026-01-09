@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, Observable, throwError } from 'rxjs';
@@ -7,13 +6,13 @@ import { map } from 'rxjs/operators';
 import { keys } from '../../../../environment/keys-env';
 import { ModalNewComponent } from '../../components/modal-new/modal-new.component';
 import { ModalComponent } from '../../components/modal/modal.component';
-import { URL, URL_API } from '../../services/auth.service';
+import { checkDateFromMonth, clineReverseDate, formateInsertDate } from '../../helpers/date-format';
+import { URL_API } from '../../services/auth.service';
 import { GalleryService, TPicture } from '../../services/gallery.service';
 import { HttpService } from '../../services/http.service';
 import { StorageService } from '../../services/storage.service';
-import { SpinnerComponent } from '../spinner/spinner.component';
 import { TelegramService } from '../../services/telegram.service';
-import { checkDateFromMonth, clineReverseDate, formateInsertDate, reverseDate } from '../../helpers/date-format';
+import { SpinnerComponent } from '../spinner/spinner.component';
 @Component({
   selector: 'app-modal-edit',
   standalone: true,
@@ -126,6 +125,17 @@ export class ModalEditComponent implements OnInit {
       return;
     }
 
+    if (this.imageForm.value.title === this.imageData.title
+      && this.imageForm.value.description === this.imageData.description
+      && clineReverseDate(this.imageForm.value.year) === this.imageData.year
+      && this.imageForm.value.album === this.imageData.album
+      && this.imageForm.value.sharing === this.imageData.sharing
+    ) {
+      this.modalText = `Данные не менялись`;
+      this.openCloseModal()
+      return
+    }
+
     const formData = new FormData();
     formData.append('title', this.imageForm.value.title);
     formData.append('description', this.imageForm.value.description);
@@ -135,7 +145,7 @@ export class ModalEditComponent implements OnInit {
     formData.append('album', this.imageForm.value.album);
     formData.append('id', this.imageData.id)
 
-    if (this.imageForm.value.sharing) {
+    if (this.imageForm.value.sharing !== this.imageData.sharing) {
       this.telegramService.publicImage(`Заявка на публикацию`);
     }
 

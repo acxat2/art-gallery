@@ -2,14 +2,13 @@
   @if (galleryData$ | async; as galleryData) {
     @if (!galleryData.length) {
 
-      <p>У вас ещё нет загруженных изображений. Нажмите <a routerLinkActive="active" routerLink="/image-upload" ><b><i>загрузить</i></b></a> для добавления своего шедевра в галлерею</p>
+      <p>У вас ещё нет загруженных изображений. Нажмите <span (click)="openUpload()" style="cursor: pointer;"><b><i>загрузить</i></b></span> для добавления своего шедевра в галлерею</p>
     } @else {
       @if (albums$ | async; as albums) {
         <div class="body-top">
           <div class="select-container">
             <app-select class="select" selectName="Альбом" (checked)="checkedAlbum($event)" [selectArr]="albums" [selectControl]="albumValue"></app-select>
           </div>
-          <!-- <a routerLinkActive="active" routerLink="/image-upload" class="btn">Загрузить</a> -->
           <button (click)="openUpload()" class="btn">Загрузить</button>
         </div>
       }

@@ -74,7 +74,7 @@ export class AnotherService {
         if (!users) return;
 
         this.userList = users;
-        this.userList$.next(this.userList)
+        this.userList$.next([...this.userList])
 
         if (res.data.images) {
           this.anotherState = res.data.images;

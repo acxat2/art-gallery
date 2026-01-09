@@ -65,31 +65,32 @@ export class PictureComponent implements DoCheck {
       this.httpService.deleteHttp(`${URL_API}/image/${this.picture?.id}`, sessionId)
       .pipe(catchError(err => {
         return throwError(() => {
-          console.error('Ошибка при загрузке:', err);
-          alert('Произошла ошибка при загрузке изображения');
+          console.error('Ошибка при удалении:', err);
+          alert('Произошла ошибка при удалении изображения');
           return err
         })
       }),
-          map(event => {
-            if (event instanceof HttpResponse) {
-              return event.body;
-            }
-            return event;
-          }))
-          .subscribe((res: any) => {
-            if (!res.process) {
-              this.isDeleteOpen = true;
-              this.modalText = "Картина удалена с вервера"
-              this.confirm = false;
+      map(event => {
+        if (event instanceof HttpResponse) {
+          return event.body;
+        }
+        return event;
+      }))
+      .subscribe((res: any) => {
+        if (!res.process) {
+          this.isDeleteOpen = true;
+          this.modalText = "Картина удалена с вервера"
+          this.confirm = false;
 
-              this.spinnerOn = false;
-              setTimeout(() => {
-                this.isDeleteOpen = false;
-              }, 1500)
-            }
-          })
+          this.spinnerOn = false;
+          setTimeout(() => {
+            this.isDeleteOpen = false;
+            this.router.navigate(['/gallery'])
+          }, 1500)
+        }
+      })
 
-      this.next();
+      // this.next();
 
     } else {
       this.isDeleteOpen = false;

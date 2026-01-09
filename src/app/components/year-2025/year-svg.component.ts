@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-year-2026-svg',
+  selector: 'app-year-2025-svg',
   standalone: true,
   imports: [],
   templateUrl: './year-svg.component.html',
   styleUrl: './year-svg.component.css'
 })
-export class YearSvgComponent {
+export class Year2025SvgComponent {
 }
